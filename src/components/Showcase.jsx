@@ -22,7 +22,7 @@ export function BrowserFrame({ children, className }) {
           <span className="size-2.5 rounded-full bg-line" />
           <span className="size-2.5 rounded-full bg-line" />
         </span>
-        <span className="mx-auto rounded-md bg-paper px-10 py-1 text-[11px] text-muted max-sm:px-4">sitelens.app/app</span>
+        <span className="mx-auto rounded-md bg-paper px-10 py-1 text-[11px] text-muted max-sm:px-4">https://site-lens.netlify.app/app</span>
         <span className="w-10" aria-hidden="true" />
       </div>
       {children}
