@@ -131,10 +131,10 @@ function Hero() {
         <span className="inline-flex items-center gap-2 rounded-full border border-line bg-paper px-3.5 py-1.5 text-[13px] text-heading shadow-sm">
           <Icon name="sparkle" className="size-4 text-amber-deep" />
           Powered by Google Gemma AI
-          <span className="h-3.5 w-px bg-line" aria-hidden="true" />
-          <span className="text-muted">Free and open source</span>
+          <span className="h-3.5 w-px bg-line max-sm:hidden" aria-hidden="true" />
+          <span className="text-muted max-sm:hidden">Free and open source</span>
         </span>
-        <h1 className="max-w-[18ch] font-display text-[66px] leading-[1.02] font-semibold tracking-[-0.025em] text-balance text-heading max-lg:text-[54px] max-sm:text-[40px]">
+        <h1 className="max-w-[24ch] font-display text-[60px] leading-[1.12] font-semibold tracking-[-0.012em] text-balance text-heading max-lg:text-[48px] max-sm:text-[36px] max-sm:leading-[1.15]">
           Your AI assistant for site inspections and daily reports.
         </h1>
         <p className="max-w-[62ch] text-[18px] leading-relaxed text-pretty text-muted max-sm:text-[16px]">
