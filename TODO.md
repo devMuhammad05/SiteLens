@@ -7,7 +7,7 @@ Stack: React 18 + Vite, Gemma 4 via the Google Gemini API (`@google/genai`-compa
 
 ## 0. Project setup
 - [x] Scaffold React (Vite) app
-- [x] Env config: `VITE_GEMINI_API_KEY`, `VITE_GEMMA_MODEL`
+- [x] Env config: `VITE_GEMMA_MODEL` (the AI key is entered by each user in the workspace)
 - [x] Demo mode with sample results when no API key is set
 
 ## 5.1 Image upload and inspection initiation (P0)

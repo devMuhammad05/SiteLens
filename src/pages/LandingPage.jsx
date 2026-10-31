@@ -30,14 +30,17 @@ const FEATURES = [
 ];
 
 const FAQ = [
-  ['Is SiteLens really free?', 'Yes. There is no charge and no sign-up. Open the workspace and start.'],
+  [
+    'Is SiteLens really free?',
+    'Yes. There is no charge and no sign-up. To use the AI, add your own key from Google AI Studio in the workspace. Creating one is free, and Google’s usage limits apply.',
+  ],
   [
     'Which AI does it use?',
     'SiteLens uses Google’s Gemma models through the Gemini API, for both reading site photos and writing reports.',
   ],
   [
     'What happens to my photos and notes?',
-    'When you check a photo or create a report, that photo or those notes are sent to Google’s AI service to be analysed. The finished reports are saved only in your browser on your device.',
+    'When you check a photo or create a report, that photo or those notes are sent to Google’s AI service, using your key, to be analysed. Your key and your finished reports are saved only in your browser on your device.',
   ],
   [
     'Does it replace a site inspection?',

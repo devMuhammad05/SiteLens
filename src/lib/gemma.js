@@ -1,11 +1,14 @@
 // Shared Gemma 4 client (Gemini API) used by photo inspection and the daily diary.
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+// The API key comes from the user, entered in the workspace (see aiKey.js).
+import { getApiKey } from './aiKey.js';
+
 const MODEL = import.meta.env.VITE_GEMMA_MODEL || 'gemma-4-26b-a4b-it';
 const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models';
 // gemma-4-31b-it has been returning HTTP 500 for image requests; this one has been reliable.
 const FALLBACK_MODEL = 'gemma-4-26b-a4b-it';
 
-export const isDemoMode = !API_KEY;
+// Without a key, SiteLens shows example results so the whole flow can still be tried.
+export const isDemoMode = () => !getApiKey();
 export const modelName = MODEL;
 
 export const SEVERITIES = ['Low', 'Medium', 'High', 'Critical'];
@@ -45,7 +48,7 @@ function extractJson(text) {
 async function requestOnce(model, parts, maxOutputTokens) {
   const res = await fetch(`${ENDPOINT}/${model}:generateContent`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': API_KEY },
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': getApiKey() },
     body: JSON.stringify({
       contents: [{ role: 'user', parts }],
       generationConfig: { temperature: 0.2, maxOutputTokens },

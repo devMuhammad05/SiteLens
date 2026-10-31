@@ -4,7 +4,7 @@ import DiaryView from '../views/DiaryView.jsx';
 import ThemeToggle from '../components/ThemeToggle.jsx';
 import { Brand, WORKFLOWS } from '../components/Brand.jsx';
 import { Button, Icon, cx } from '../components/ui.jsx';
-import { isDemoMode } from '../lib/gemma.js';
+import AiKeyPanel, { AiKeyButton, AiKeyNotice } from '../components/AiKeyPanel.jsx';
 import { useInstallPrompt, useOnline } from '../lib/pwa.js';
 
 const fromHash = () => (WORKFLOWS.some((w) => `#${w.id}` === window.location.hash) ? window.location.hash.slice(1) : 'inspect');
@@ -13,6 +13,7 @@ export default function WorkspacePage({ active = true }) {
   const [workflow, setWorkflow] = useState(fromHash);
   const online = useOnline();
   const { canInstall, install } = useInstallPrompt();
+  const [keyPanelOpen, setKeyPanelOpen] = useState(false);
 
   useEffect(() => {
     const onHash = () => setWorkflow(fromHash());
@@ -42,11 +43,7 @@ export default function WorkspacePage({ active = true }) {
           <Brand />
           <ToolSwitcher current={workflow} onChange={choose} className="max-md:hidden" />
           <div className="flex items-center gap-2">
-            {isDemoMode && (
-              <span className="font-mono text-[11px] tracking-wide text-amber-deep max-lg:hidden" title="SiteLens is showing example reports, not real analysis.">
-                SAMPLE MODE
-              </span>
-            )}
+            <AiKeyButton onClick={() => setKeyPanelOpen(true)} />
             {canInstall && (
               <Button size="sm" variant="dark" icon="download" className="h-10" onClick={install}>
                 Install app
@@ -76,6 +73,8 @@ export default function WorkspacePage({ active = true }) {
           <p className="mt-1.5 max-w-[64ch] text-[15px] text-muted">{current.blurb}</p>
         </div>
 
+        <AiKeyNotice onAdd={() => setKeyPanelOpen(true)} />
+
         {/* Both stay mounted so switching tools doesn't discard work in progress. */}
         <div hidden={workflow !== 'inspect'}>
           <InspectionView />
@@ -84,6 +83,8 @@ export default function WorkspacePage({ active = true }) {
           <DiaryView />
         </div>
       </div>
+
+      <AiKeyPanel open={keyPanelOpen} onClose={() => setKeyPanelOpen(false)} />
     </>
   );
 }

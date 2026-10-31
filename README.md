@@ -12,18 +12,18 @@ Designed for engineers, site supervisors, and construction professionals, SiteLe
 
 ```bash
 npm install
-cp .env.example .env   # add your Google AI Studio key to enable Gemma analysis
 npm run dev
 ```
 
-Without `VITE_GEMINI_API_KEY` the app runs in **demo mode** and returns sample findings, so the whole flow can be explored offline.
+Open the workspace and select **Add AI key** in the header. Paste a Google AI Studio key (free to create at https://aistudio.google.com/apikey). SiteLens checks the key with Google, then saves it **only in that browser**. No key is built into the app, so a deployed copy never exposes anyone's key.
 
-| Variable | Purpose |
+Without a key, the app shows **example results**, so the whole flow can still be explored.
+
+| Optional variable | Purpose |
 | --- | --- |
-| `VITE_GEMINI_API_KEY` | Google AI Studio API key used to call Gemma via the Gemini API |
 | `VITE_GEMMA_MODEL` | Gemma model id (default `gemma-4-26b-a4b-it`) |
 
-> The MVP calls the API from the browser, so the key is visible to users. Put a backend proxy in front of it before deploying publicly.
+> AI requests go from the user's browser straight to Google using their own key, and Google's usage limits for that key apply.
 
 ## Pages
 

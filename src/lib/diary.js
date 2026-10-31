@@ -135,7 +135,7 @@ export async function generateDiary(entry) {
   const hasNotes = NOTE_FIELDS.some((f) => entry.notes[f.key]?.trim());
   if (!hasNotes) throw new Error('Add some site notes first.');
 
-  if (isDemoMode) {
+  if (isDemoMode()) {
     await new Promise((r) => setTimeout(r, 1500));
     return { ...normaliseDiary(demoDiaryResult), demo: true, model: 'demo' };
   }
@@ -175,7 +175,7 @@ function basicTidy(text) {
  */
 export async function tidyNote(sectionTitle, text) {
   if (!text.trim()) return text;
-  if (isDemoMode) {
+  if (isDemoMode()) {
     await new Promise((r) => setTimeout(r, 600));
     return basicTidy(text);
   }

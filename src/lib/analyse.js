@@ -107,7 +107,7 @@ export function normaliseResult(raw) {
 }
 
 export async function analyseImage(file) {
-  if (isDemoMode) {
+  if (isDemoMode()) {
     await new Promise((r) => setTimeout(r, 1800));
     return { ...normaliseResult(demoResult), demo: true, model: 'demo' };
   }
