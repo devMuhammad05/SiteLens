@@ -1,7 +1,7 @@
 {
   "name": "SiteLens: site inspections and daily reports",
   "short_name": "SiteLens",
-  "description": "Identify visible site hazards and defects from a photo, and turn rough site notes into a structured daily report.",
+  "description": "SiteLens is an AI-powered construction site inspection and reporting tool that helps site engineers identify potential hazards and defects from site photos and turn written or spoken site notes into clear, structured daily reports.",
   "id": "/app",
   "start_url": "/app",
   "scope": "/",
