@@ -42,7 +42,7 @@ export default function HeroDemo() {
 
   return (
     <figure
-      className="overflow-hidden rounded-md border border-line bg-paper shadow-[0_30px_60px_-30px_rgb(18_28_43/0.35)]"
+      className="overflow-hidden rounded-md border border-line bg-paper shadow-[0_30px_60px_-30px_rgb(15_23_42/0.35)]"
       aria-label="Example: rough site notes turned into a daily report"
     >
       <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 font-mono text-[11px] tracking-wide text-muted">

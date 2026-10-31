@@ -4,7 +4,7 @@
    - Google Fonts: served from cache, refreshed in the background.
    - Everything else (AI and weather requests) goes straight to the network and is never cached. */
 
-const VERSION = 'sitelens-v1';
+const VERSION = 'sitelens-v2';
 const SHELL = ['/', '/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (event) => {

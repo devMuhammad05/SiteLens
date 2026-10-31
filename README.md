@@ -45,3 +45,7 @@ Then serve the `dist/` folder from the site root over HTTPS (or `localhost`). `d
 When you change `public/sw.js`, bump `VERSION` in it so installed apps pick up the new cache.
 
 See [TODO.md](TODO.md) for the PRD breakdown and status.
+
+## License
+
+SiteLens is free and open source under the [MIT License](LICENSE).

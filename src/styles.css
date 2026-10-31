@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
-/* SiteLens design system: warm paper canvas, deep navy for structure and type, safety amber for primary
-   actions and construction indicators. Newsreader for display headings, Inter for UI, JetBrains Mono for sheet labels. */
+/* SiteLens design system: white and cool slate surfaces, deep slate for structure and type, bright orange
+   for primary actions and highlights. Newsreader for display headings, Inter for UI, JetBrains Mono for sheet labels. */
 
 @theme inline {
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -21,6 +21,7 @@
   --color-amber: var(--amber);
   --color-amber-ink: var(--amber-ink);
   --color-amber-soft: var(--amber-soft);
+  --color-amber-hover: var(--amber-hover);
   --color-amber-deep: var(--amber-deep);
   --color-low: var(--low);
   --color-medium: var(--medium);
@@ -38,24 +39,26 @@
 
 :root {
   color-scheme: light;
-  --canvas: #f3f2ee;
-  --paper: #fcfbf9;
-  --paper-2: #f0eee8;
-  --ink: #2a3442;
-  --heading: #121c2b;
-  --muted: #646b75;
-  --line: #e0ddd5;
-  --line-strong: #17263d;
-  --navy: #17263d;
+  /* Palette: white and cool slate surfaces, deep slate text, bright orange accent. */
+  --canvas: #f8fafc;
+  --paper: #ffffff;
+  --paper-2: #f1f5f9;
+  --ink: #334155;
+  --heading: #0f172a;
+  --muted: #64748b;
+  --line: #e2e8f0;
+  --line-strong: #0f172a;
+  --navy: #0f172a;
   --navy-ink: #ffffff;
-  --amber: #e9ac28;
-  --amber-ink: #17263d;
-  --amber-soft: #f8eed6;
-  --amber-deep: #a86c06;
-  --low: #2b7d50;
-  --medium: #a86f00;
-  --high: #c9541a;
-  --critical: #b81f36;
+  --amber: #ff6900; /* accent and primary buttons (dark text on it for contrast) */
+  --amber-hover: #f25f00;
+  --amber-ink: #0f172a;
+  --amber-soft: #fff1e6;
+  --amber-deep: #c2410c; /* orange that is readable as text on white */
+  --low: #15803d;
+  --medium: #b45309;
+  --high: #ea580c;
+  --critical: #b91c1c;
   --sev-ink: #ffffff;
   --band-opacity: 1;
 }
@@ -63,51 +66,53 @@
 /* Dark theme: chosen with the header toggle (data-theme on <html>), otherwise follows the system. */
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --canvas: #0e131b;
-  --paper: #141b26;
-  --paper-2: #1a2330;
-  --ink: #d5dde8;
-  --heading: #f2f5f9;
-  --muted: #93a1b4;
-  --line: #26344a;
-  --line-strong: #8193ab;
-  --navy: #101b2b;
+  --canvas: #0b1120;
+  --paper: #0f172a;
+  --paper-2: #172033;
+  --ink: #cbd5e1;
+  --heading: #f8fafc;
+  --muted: #94a3b8;
+  --line: #233047;
+  --line-strong: #94a3b8;
+  --navy: #0f172a;
   --navy-ink: #ffffff;
-  --amber: #e9ac28;
-  --amber-ink: #17263d;
-  --amber-soft: #2e2716;
-  --amber-deep: #f0bd4f;
-  --low: #4cbd80;
-  --medium: #e0a83a;
-  --high: #ef7d45;
-  --critical: #f05a70;
-  --sev-ink: #0d1420;
-  --band-opacity: 0.35;
+  --amber: #ff6900;
+  --amber-hover: #ff7d24;
+  --amber-ink: #0f172a;
+  --amber-soft: #2a1709;
+  --amber-deep: #ff8a3d;
+  --low: #4ade80;
+  --medium: #fbbf24;
+  --high: #fb7c3c;
+  --critical: #f87171;
+  --sev-ink: #0b1120;
+  --band-opacity: 0.4;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --canvas: #0e131b;
-    --paper: #141b26;
-    --paper-2: #1a2330;
-    --ink: #d5dde8;
-    --heading: #f2f5f9;
-    --muted: #93a1b4;
-    --line: #26344a;
-    --line-strong: #8193ab;
-    --navy: #101b2b;
+    --canvas: #0b1120;
+    --paper: #0f172a;
+    --paper-2: #172033;
+    --ink: #cbd5e1;
+    --heading: #f8fafc;
+    --muted: #94a3b8;
+    --line: #233047;
+    --line-strong: #94a3b8;
+    --navy: #0f172a;
     --navy-ink: #ffffff;
-    --amber: #e9ac28;
-    --amber-ink: #17263d;
-    --amber-soft: #2e2716;
-    --amber-deep: #f0bd4f;
-    --low: #4cbd80;
-    --medium: #e0a83a;
-    --high: #ef7d45;
-    --critical: #f05a70;
-    --sev-ink: #0d1420;
-    --band-opacity: 0.35;
+    --amber: #ff6900;
+    --amber-hover: #ff7d24;
+    --amber-ink: #0f172a;
+    --amber-soft: #2a1709;
+    --amber-deep: #ff8a3d;
+    --low: #4ade80;
+    --medium: #fbbf24;
+    --high: #fb7c3c;
+    --critical: #f87171;
+    --sev-ink: #0b1120;
+    --band-opacity: 0.4;
   }
 }
 
@@ -155,8 +160,8 @@
 @media print {
   :root, :root[data-theme], :root:not([data-theme='light']) {
     color-scheme: light;
-    --canvas: #fff; --paper: #fff; --paper-2: #f4f6f9; --ink: #1b2636; --heading: #17263d; --muted: #555;
-    --line: #cfd6df; --line-strong: #17263d;
+    --canvas: #fff; --paper: #fff; --paper-2: #f1f5f9; --ink: #1e293b; --heading: #0f172a; --muted: #555;
+    --line: #d5dbe3; --line-strong: #0f172a;
     --low: #2b7d50; --medium: #a86f00; --high: #c9541a; --critical: #b81f36; --sev-ink: #fff;
   }
   body { font-size: 12px; }

@@ -40,7 +40,7 @@ export function Icon({ name, className = 'size-[18px]' }) {
 const BUTTON = {
   base: 'inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50',
   variant: {
-    primary: 'border-amber bg-amber text-amber-ink hover:enabled:bg-[#dba020]',
+    primary: 'border-amber bg-amber text-amber-ink hover:enabled:bg-amber-hover',
     dark: 'border-heading bg-heading text-paper hover:enabled:opacity-90',
     secondary: 'border-line bg-paper text-heading hover:enabled:border-line-strong/40 hover:enabled:bg-paper-2',
     ghost: 'border-transparent bg-transparent text-heading hover:enabled:bg-paper-2',

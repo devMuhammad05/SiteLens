@@ -15,7 +15,7 @@ const NOTE_SECTIONS = [
 
 export function BrowserFrame({ children, className }) {
   return (
-    <div className={cx('overflow-hidden rounded-xl border border-line bg-paper shadow-[0_40px_80px_-40px_rgb(18_28_43/0.45)]', className)}>
+    <div className={cx('overflow-hidden rounded-xl border border-line bg-paper shadow-[0_40px_80px_-40px_rgb(15_23_42/0.45)]', className)}>
       <div className="flex items-center gap-3 border-b border-line bg-paper-2 px-4 py-2.5">
         <span className="flex gap-1.5" aria-hidden="true">
           <span className="size-2.5 rounded-full bg-line" />
@@ -71,7 +71,7 @@ const TALLY = [
 
 export function InspectionOutput() {
   return (
-    <div className="mx-auto grid max-w-[480px] gap-4 rounded-xl border border-line bg-paper p-5 shadow-[0_30px_60px_-35px_rgb(18_28_43/0.4)]">
+    <div className="mx-auto grid max-w-[480px] gap-4 rounded-xl border border-line bg-paper p-5 shadow-[0_30px_60px_-35px_rgb(15_23_42/0.4)]">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11.5px] text-muted">Site inspection report, 6 findings</p>
