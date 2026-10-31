@@ -143,6 +143,59 @@ export async function generateDiary(entry) {
   return { ...normaliseDiary(json), demo: false, model };
 }
 
+// ---- AI transcriber: tidy dictated or rough notes for one section ----
+
+const SHORTHAND = [
+  [/\babt\b/gi, 'about'],
+  [/\bhrs?\b/gi, 'hours'],
+  [/\blabs\b/gi, 'labourers'],
+  [/\bflr\b/gi, 'floor'],
+  [/\bcol\b/gi, 'column'],
+  [/\bblk\b/gi, 'block'],
+  [/\bthurs\b/gi, 'Thursday'],
+  [/\bGF\b/g, 'ground floor'],
+];
+
+// Offline-safe fallback used in sample mode: expand common shorthand and fix sentence casing.
+function basicTidy(text) {
+  let t = text.replace(/\s+/g, ' ').trim();
+  SHORTHAND.forEach(([re, word]) => (t = t.replace(re, word)));
+  t = t
+    .split(/(?<=[.!?])\s+|\s*;\s*|\s+-\s+/)
+    .map((s) => s.trim().replace(/[!?.]+$/, ''))
+    .filter(Boolean)
+    .map((s) => s[0].toUpperCase() + s.slice(1) + '.')
+    .join(' ');
+  return t;
+}
+
+/**
+ * Clean up a section of notes (often dictated) into clear, professional site English.
+ * Keeps every fact and never adds information.
+ */
+export async function tidyNote(sectionTitle, text) {
+  if (!text.trim()) return text;
+  if (isDemoMode) {
+    await new Promise((r) => setTimeout(r, 600));
+    return basicTidy(text);
+  }
+  const prompt = `You tidy up a construction site engineer's notes for the "${sectionTitle}" section of a daily site diary. The notes may be dictated by voice, so they can contain speech-recognition mistakes, missing punctuation and informal shorthand.
+
+Rules:
+- Fix misheard words, spelling, punctuation and grammar, and expand obvious shorthand (e.g. "labs" = labourers, "abt" = about).
+- Write in clear, concise, professional construction English, as short sentences or a short list.
+- Keep every fact, number, name, location, time and quantity exactly. Do not add, guess or remove information.
+- If something is unclear, keep the original wording rather than guessing.
+- Return ONLY a JSON object: {"text": "the tidied notes"}
+
+Notes:
+${text}`;
+  const { json } = await generateJson([{ text: prompt }], { maxOutputTokens: 2048 });
+  const tidied = str(json?.text).trim();
+  if (!tidied) throw new Error('SiteLens could not tidy these notes. Please try again.');
+  return tidied;
+}
+
 // ---- Plain-text export (for email / WhatsApp) ----
 
 export function diaryToText(entry, r) {

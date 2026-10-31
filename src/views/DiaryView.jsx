@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import DiaryReport from '../components/DiaryReport.jsx';
 import DiaryDraft from '../components/DiaryDraft.jsx';
+import NoteField from '../components/NoteField.jsx';
+import { appendPhrase } from '../lib/speech.js';
 import {
   Button,
   Chip,
@@ -10,7 +12,6 @@ import {
   Input,
   LinkButton,
   Progress,
-  Textarea,
   cx,
   panel,
   statusTone,
@@ -216,7 +217,7 @@ export default function DiaryView() {
             <div>
               <h2 className="text-[17px] font-semibold">Today's site notes</h2>
               <p className="mt-0.5 text-[13px] text-muted">
-                {filledCount} of {totalSections} sections filled in. Shorthand is fine; skip what doesn't apply.
+                {filledCount} of {totalSections} sections filled in. Type or dictate; shorthand is fine.
               </p>
             </div>
             <LinkButton className="mt-0.5 flex-none text-[13px]" onClick={loadExample} disabled={loading}>
@@ -287,12 +288,13 @@ export default function DiaryView() {
               open={openSections.has(f.key)}
               onToggle={() => toggleSection(f.key)}
             >
-              <Textarea
-                rows={4}
-                aria-label={NOTE_TITLES[f.key] || f.label}
+              <NoteField
+                title={NOTE_TITLES[f.key] || f.label}
                 value={entry.notes[f.key]}
                 placeholder={f.placeholder}
-                onChange={(e) => setNote(f.key, e.target.value)}
+                disabled={loading}
+                onChange={(text) => setNote(f.key, text)}
+                onAppend={(phrase) => setEntry((e) => ({ ...e, notes: { ...e.notes, [f.key]: appendPhrase(e.notes[f.key], phrase) } }))}
               />
             </FormSection>
           ))}

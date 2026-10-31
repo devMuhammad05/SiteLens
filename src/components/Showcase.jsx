@@ -1,7 +1,7 @@
 import HeroDemo from './HeroDemo.jsx';
 import { Chip, Icon, cx } from './ui.jsx';
 
-/* Product showcase for the landing page: the workspace in a browser window and a photo inspection on a phone.
+/* Product showcase for the landing page: the workspace in a browser window, and an example photo inspection output.
    Everything here is illustrative example content, drawn with real SiteLens components where possible. */
 
 const NOTE_SECTIONS = [
@@ -55,66 +55,67 @@ function WorkspaceMock() {
   );
 }
 
-// A simple line drawing of a building frame under construction, with hazard callouts.
-function SiteSketch() {
-  return (
-    <svg viewBox="0 0 240 160" className="block w-full" role="img" aria-label="Sketch of a concrete frame with two hazards marked">
-      <rect width="240" height="160" fill="#dfe4ea" />
-      <rect y="128" width="240" height="32" fill="#c9cfd6" />
-      <g stroke="#17263d" strokeWidth="3" fill="none" strokeLinecap="round">
-        <path d="M30 128V58M90 128V58M150 128V58M210 128V58" />
-        <path d="M22 58h196M22 92h196" />
-      </g>
-      <g stroke="#17263d" strokeWidth="1.4" opacity="0.55">
-        <path d="M30 58V36M90 58V36M150 58V36M210 58V36" />
-        <path d="M24 36l6-4 6 4M84 36l6-4 6 4M144 36l6-4 6 4M204 36l6-4 6 4" />
-      </g>
-      <g fontFamily="Inter, sans-serif" fontSize="9" fontWeight="600">
-        <circle cx="210" cy="40" r="11" fill="none" stroke="#c9541a" strokeWidth="2.2" />
-        <circle cx="210" cy="22" r="7" fill="#c9541a" />
-        <text x="210" y="25" textAnchor="middle" fill="#fff">1</text>
-        <circle cx="52" cy="58" r="11" fill="none" stroke="#b81f36" strokeWidth="2.2" />
-        <circle cx="52" cy="40" r="7" fill="#b81f36" />
-        <text x="52" y="43" textAnchor="middle" fill="#fff">2</text>
-      </g>
-    </svg>
-  );
-}
+// What a photo inspection returns, using the same structure as the real report.
+const FINDINGS = [
+  ['Safety hazard', 'Unprotected slab edge', 'Critical', 'critical', 'Install guardrails and toe boards before more work at height.', 88],
+  ['Safety hazard', 'Exposed starter bars without caps', 'High', 'high', 'Fit rebar safety caps or bend-over protection.', 86],
+  ['Defect', 'Honeycombing at column base', 'High', 'high', 'Have the engineer assess the depth before repair.', 74],
+];
 
-export function PhoneFrame({ className }) {
+const TALLY = [
+  ['Critical', 'critical', 1],
+  ['High', 'high', 2],
+  ['Medium', 'medium', 2],
+  ['Low', 'low', 1],
+];
+
+export function InspectionOutput() {
   return (
-    <div className={cx('w-[250px] rounded-[34px] border-[7px] border-[#121c2b] bg-[#121c2b] shadow-[0_40px_80px_-30px_rgb(18_28_43/0.6)]', className)}>
-      <div className="overflow-hidden rounded-[27px] bg-paper">
-        <div className="flex justify-center pt-2 pb-1" aria-hidden="true">
-          <span className="h-4 w-20 rounded-full bg-[#121c2b]" />
+    <div className="mx-auto grid max-w-[480px] gap-4 rounded-xl border border-line bg-paper p-5 shadow-[0_30px_60px_-35px_rgb(18_28_43/0.4)]">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-[11.5px] text-muted">Site inspection report, 6 findings</p>
+          <p className="font-display text-[22px] leading-tight font-semibold text-heading">Block B, first floor</p>
         </div>
-        <div className="grid gap-3 px-3.5 pb-5">
-          <div className="flex items-center justify-between">
-            <span className="text-[11px] font-medium text-muted">Site inspection report</span>
-            <Chip tone="critical">High risk</Chip>
-          </div>
-          <p className="font-display text-[17px] leading-tight font-semibold text-heading">Block B, first floor</p>
-          <div className="overflow-hidden rounded-lg">
-            <SiteSketch />
-          </div>
-          {[
-            ['1', 'Exposed starter bars without caps', 'High', 'high'],
-            ['2', 'Unprotected slab edge', 'Critical', 'critical'],
-          ].map(([n, title, sev, tone]) => (
-            <div key={n} className={cx('grid gap-1 rounded-r-md border-l-[3px] bg-paper-2 py-2 pr-2 pl-2.5', tone === 'high' ? 'border-l-high' : 'border-l-critical')}>
-              <div className="flex items-start justify-between gap-2">
-                <span className="text-[11.5px] leading-snug font-semibold text-heading">
-                  {n}. {title}
-                </span>
-                <Chip tone={tone} solid>
-                  {sev}
-                </Chip>
-              </div>
-              <span className="text-[10.5px] text-muted">What to do: {tone === 'high' ? 'fit rebar safety caps' : 'install guardrails and toe boards'}</span>
-            </div>
-          ))}
-        </div>
+        <span className="rounded-md border border-critical/25 bg-critical/8 px-2.5 py-1 text-[12px] whitespace-nowrap text-critical">
+          Overall risk <strong className="font-semibold">High</strong>
+        </span>
       </div>
+      <dl className="grid grid-cols-4 divide-x divide-line rounded-lg border border-line">
+        {TALLY.map(([label, tone, n]) => (
+          <div key={label} className="grid justify-items-start gap-1.5 px-3 py-2.5 max-sm:px-2">
+            <dd className="text-[19px] leading-none font-semibold text-heading tabular-nums">{n}</dd>
+            <dt>
+              <Chip tone={tone}>{label}</Chip>
+            </dt>
+          </div>
+        ))}
+      </dl>
+      <ul className="grid gap-2.5">
+        {FINDINGS.map(([category, title, sev, tone, action, sure]) => (
+          <li key={title} className={cx('grid gap-1.5 rounded-r-md border-l-[3px] bg-paper-2 py-2.5 pr-3 pl-3.5', tone === 'critical' ? 'border-l-critical' : 'border-l-high')}>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[10.5px] text-muted">{category}</p>
+                <p className="text-[13.5px] leading-snug font-semibold text-heading">{title}</p>
+              </div>
+              <Chip tone={tone} solid>
+                {sev}
+              </Chip>
+            </div>
+            <p className="text-[12.5px] text-ink">
+              <span className="font-medium text-heading">What to do:</span> {action}
+            </p>
+            <span className="flex items-center gap-1.5 text-[11px] text-muted tabular-nums">
+              How sure
+              <span className="h-1 w-12 overflow-hidden rounded-full bg-line">
+                <span className="block h-full rounded-full bg-line-strong/60" style={{ width: `${sure}%` }} />
+              </span>
+              {sure}%
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -125,7 +126,6 @@ export default function Showcase() {
       <BrowserFrame>
         <WorkspaceMock />
       </BrowserFrame>
-      <PhoneFrame className="absolute -right-6 -bottom-14 max-lg:hidden" />
     </div>
   );
 }
