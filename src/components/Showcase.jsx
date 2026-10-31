@@ -1,5 +1,5 @@
 import HeroDemo from './HeroDemo.jsx';
-import { Chip, Icon, cx } from './ui.jsx';
+import { Chip, Icon, TONE_TEXT, cx } from './ui.jsx';
 
 /* Product showcase for the landing page: the workspace in a browser window, and an example photo inspection output.
    Everything here is illustrative example content, drawn with real SiteLens components where possible. */
@@ -71,37 +71,36 @@ const TALLY = [
 
 export function InspectionOutput() {
   return (
-    <div className="mx-auto grid max-w-[480px] gap-4 rounded-xl border border-line bg-paper p-5 shadow-[0_30px_60px_-35px_rgb(15_23_42/0.4)]">
+    <div className="mx-auto grid max-w-[480px] gap-4 rounded-xl border border-line bg-paper p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-[11.5px] text-muted">Site inspection report, 6 findings</p>
           <p className="font-display text-[22px] leading-tight font-semibold text-heading">Block B, first floor</p>
         </div>
-        <span className="rounded-md border border-critical/25 bg-critical/8 px-2.5 py-1 text-[12px] whitespace-nowrap text-critical">
-          Overall risk <strong className="font-semibold">High</strong>
+        <span className="text-[12.5px] whitespace-nowrap text-muted">
+          Overall risk <strong className="font-semibold text-critical">High</strong>
         </span>
       </div>
-      <dl className="grid grid-cols-4 divide-x divide-line rounded-lg border border-line">
-        {TALLY.map(([label, tone, n]) => (
-          <div key={label} className="grid justify-items-start gap-1.5 px-3 py-2.5 max-sm:px-2">
+      <dl className="grid grid-cols-4 overflow-hidden rounded-lg border border-line max-[460px]:grid-cols-2">
+        {TALLY.map(([label, tone, n], i) => (
+          <div
+            key={label}
+            className={cx('border-line px-3 py-2.5', i > 0 && 'min-[461px]:border-l', i % 2 === 1 && 'max-[460px]:border-l', i > 1 && 'max-[460px]:border-t')}
+          >
             <dd className="text-[19px] leading-none font-semibold text-heading tabular-nums">{n}</dd>
-            <dt>
-              <Chip tone={tone}>{label}</Chip>
-            </dt>
+            <dt className={cx('mt-1 text-[11.5px]', TONE_TEXT[tone])}>{label}</dt>
           </div>
         ))}
       </dl>
-      <ul className="grid gap-2.5">
+      <ul className="grid gap-4 border-t border-line pt-4">
         {FINDINGS.map(([category, title, sev, tone, action, sure]) => (
-          <li key={title} className={cx('grid gap-1.5 rounded-r-md border-l-[3px] bg-paper-2 py-2.5 pr-3 pl-3.5', tone === 'critical' ? 'border-l-critical' : 'border-l-high')}>
+          <li key={title} className={cx('grid gap-1.5 border-l-2 py-1 pl-3.5', tone === 'critical' ? 'border-l-critical' : 'border-l-high')}>
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-[10.5px] text-muted">{category}</p>
                 <p className="text-[13.5px] leading-snug font-semibold text-heading">{title}</p>
               </div>
-              <Chip tone={tone} solid>
-                {sev}
-              </Chip>
+              <Chip tone={tone}>{sev}</Chip>
             </div>
             <p className="text-[12.5px] text-ink">
               <span className="font-medium text-heading">What to do:</span> {action}

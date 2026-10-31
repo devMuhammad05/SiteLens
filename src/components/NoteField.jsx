@@ -77,7 +77,7 @@ export default function NoteField({ title, value, placeholder, onChange, onAppen
         >
           {dictation.listening ? 'Stop' : 'Dictate'}
         </Button>
-        <Button size="sm" icon="sparkle" onClick={tidy} disabled={busy || !value.trim()} busy={tidying}>
+        <Button size="sm" onClick={tidy} disabled={busy || !value.trim()} busy={tidying}>
           {tidying ? 'Tidying…' : 'Tidy up with AI'}
         </Button>
         {before !== null && (

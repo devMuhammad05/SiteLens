@@ -1,66 +1,69 @@
 import ThemeToggle from '../components/ThemeToggle.jsx';
 import Showcase, { InspectionOutput } from '../components/Showcase.jsx';
 import { Brand, GithubIcon, REPO_URL, WORKFLOWS } from '../components/Brand.jsx';
+import Reveal from '../components/Reveal.jsx';
 import { Chip, Icon, cx } from '../components/ui.jsx';
 import { Link } from '../lib/router.jsx';
 
-const pill = 'inline-flex h-12 items-center justify-center gap-2.5 rounded-full px-6 text-[15px] font-medium no-underline transition-colors';
-const pillPrimary = cx(pill, 'bg-amber text-amber-ink hover:bg-amber-hover');
-const pillOutline = cx(pill, 'border border-line-strong/20 text-heading hover:bg-paper-2');
+const button = 'inline-flex h-11 items-center justify-center gap-2 rounded-lg px-5 text-[15px] font-medium no-underline transition-all duration-200';
+const buttonPrimary = cx(button, 'bg-amber text-amber-ink hover:bg-amber-hover');
+const buttonSecondary = cx(button, 'border border-line text-heading hover:bg-paper-2');
+const section = 'mx-auto max-w-[1120px] px-5 lg:px-8';
+const h2 = 'font-display text-[38px] leading-[1.15] font-semibold tracking-[-0.01em] text-balance max-sm:text-[30px]';
 
 const STEPS = [
-  ['Capture', 'Take a photo of the area you are checking, or write down the day. Type it, or just speak and SiteLens types for you.'],
-  ['The AI analyses it', 'Google’s Gemma AI looks at the photo or reads your notes, then sorts hazards, defects, progress, labour and delays.'],
-  ['Review and share', 'Check the report, then download a PDF or send it on WhatsApp or email. Every report is saved on your device.'],
+  ['Capture', 'Take a photo of the area you are checking, or write down the day. Type it, or speak and SiteLens types for you.'],
+  ['SiteLens analyses it', 'Google’s Gemma AI reads the photo or your notes and sorts out hazards, defects, progress, labour and delays.'],
+  ['Review and share', 'Check the report, then download a PDF or send it by WhatsApp or email. Every report is saved on your device.'],
 ];
 
 const FEATURES = [
-  ['camera', 'AI hazard and defect detection', 'Spots visible safety hazards, defects and quality issues in a site photo.'],
+  ['camera', 'Hazard and defect detection', 'Finds visible safety hazards, defects and quality issues in site photos.'],
+  ['upload', 'Several photos, one report', 'Check up to four photos of an area together. Each finding says which photo it is in.'],
   ['check', 'Severity and confidence', 'Every finding is rated from Low to Critical, with how sure the AI is.'],
-  ['arrow', 'Recommended actions', 'A practical next step for each problem, listed most urgent first.'],
-  ['mic', 'Voice dictation', 'Speak your notes on site instead of typing with dusty hands.'],
-  ['sparkle', 'AI tidy-up', 'Turns rough or spoken notes into clear, professional wording, without adding anything.'],
-  ['clipboard', 'Live report preview', 'Watch the daily report take shape as you fill in each section.'],
-  ['history', 'Missing-info check', 'The AI points out what a daily report usually needs that your notes left out.'],
+  ['arrow', 'Recommended actions', 'A practical next step for each problem, most urgent first.'],
+  ['mic', 'Voice dictation', 'Speak your notes on site instead of typing.'],
+  ['sparkle', 'Tidy-up', 'Turns rough or spoken notes into clear, professional wording without adding anything.'],
+  ['clipboard', 'Live report preview', 'The daily report takes shape as you fill in each section.'],
+  ['eye', 'Missing-info check', 'Points out what a daily report usually needs that your notes left out.'],
+  ['history', 'Ask your reports', 'Ask questions like “When did we last pour concrete?” and get answers from your saved reports, with the dates.'],
   ['location', 'Weather fill-in', 'Adds today’s weather for your location in one tap.'],
   ['share', 'PDF, copy and share', 'A clean PDF for the manager, or plain text for WhatsApp and email.'],
-  ['download', 'Install it, use it offline', 'Add SiteLens to your phone. Notes and past reports work without signal.'],
-  ['copy', 'Reports stay on your device', 'Your saved reports live in your browser, not on our servers.'],
-  ['github', 'Free and open source', 'No cost and no sign-up. The code is public on GitHub under the MIT licence.'],
+  ['download', 'Works offline', 'Install it on your phone. Notes and past reports work without signal.'],
+  ['key', 'Private by default', 'Reports are saved in your browser. There is no SiteLens server.'],
+  ['moon', 'Light and dark mode', 'Easy to read in the site office or outside in bright sun.'],
+  ['github', 'Free and open source', 'No cost, no sign-up. The code is on GitHub under the MIT licence.'],
 ];
 
 const FAQ = [
   [
-    'Is SiteLens really free?',
+    'Is SiteLens free?',
     'Yes. There is no charge and no sign-up. To use the AI, add your own key from Google AI Studio in the workspace. Creating one is free, and Google’s usage limits apply.',
   ],
-  [
-    'Which AI does it use?',
-    'SiteLens uses Google’s Gemma models through the Gemini API, for both reading site photos and writing reports.',
-  ],
+  ['Which AI does it use?', 'Google’s Gemma models, through the Gemini API, for both reading site photos and writing reports.'],
   [
     'What happens to my photos and notes?',
-    'When you check a photo or create a report, that photo or those notes are sent to Google’s AI service, using your key, to be analysed. Your key and your finished reports are saved only in your browser on your device.',
+    'When you check photos, create a report or ask a question, those photos, notes or saved reports are sent to Google’s AI service with your key. Your key and your finished reports are saved only in your browser.',
   ],
   [
     'Does it replace a site inspection?',
-    'No. SiteLens gives a fast first look from what is visible in a photo or written in your notes. Always confirm findings on site and use professional judgement.',
+    'No. SiteLens gives a quick first look at what is visible in a photo or written in your notes. Always confirm findings on site.',
   ],
 ];
 
 export default function LandingPage() {
   return (
     <>
-      <header className="sticky top-0 z-30 border-b border-line bg-paper/85 backdrop-blur-md">
-        <div className="mx-auto flex h-16 max-w-[1200px] items-center justify-between gap-4 px-5 lg:px-8">
+      <header className="sticky top-0 z-30 border-b border-line bg-paper/90 backdrop-blur">
+        <div className={cx(section, 'flex h-16 items-center justify-between gap-3')}>
           <Brand />
-          <div className="flex items-center gap-7">
-            <nav className="flex items-center gap-7 text-[14px] text-muted max-lg:hidden" aria-label="Main">
-              <a href="#features" className="hover:text-heading">
-                Features
-              </a>
+          <div className="flex min-w-0 items-center gap-6">
+            <nav className="flex items-center gap-6 text-[14px] text-muted max-lg:hidden" aria-label="Main">
               <a href="#how-it-works" className="hover:text-heading">
                 How it works
+              </a>
+              <a href="#features" className="hover:text-heading">
+                Features
               </a>
               <a href="#open-source" className="hover:text-heading">
                 Open source
@@ -71,14 +74,16 @@ export default function LandingPage() {
                 href={REPO_URL}
                 target="_blank"
                 rel="noreferrer"
-                className="grid size-10 place-items-center rounded-full text-heading hover:bg-paper-2 max-sm:hidden"
+                className="grid size-10 place-items-center rounded-lg text-muted hover:bg-paper-2 hover:text-heading max-sm:hidden"
                 aria-label="SiteLens on GitHub"
                 title="SiteLens on GitHub"
               >
                 <GithubIcon />
               </a>
-              <ThemeToggle />
-              <Link to="/app" className={cx(pillPrimary, 'h-10 px-5 text-[14px] whitespace-nowrap max-sm:px-4')}>
+              <span className="max-[360px]:hidden">
+                <ThemeToggle />
+              </span>
+              <Link to="/app" className={cx(buttonPrimary, 'h-10 px-4 text-[14px] whitespace-nowrap max-[360px]:px-3')}>
                 <span className="max-sm:hidden">Open workspace</span>
                 <span className="sm:hidden">Open app</span>
               </Link>
@@ -90,22 +95,18 @@ export default function LandingPage() {
       <main>
         <Hero />
         <HowItWorks />
-        <FeatureSection
+        <Tool
           id="photo-inspection"
-          kicker="AI photo inspection"
-          title="AI that spots what needs fixing."
-          text="Upload a photo of the area you are checking. SiteLens’s AI looks at what is visible, flags safety hazards, defects and quality issues, rates how serious each one is, and recommends what to do, most urgent first."
-          tags={['Hazard detection', 'Defects and quality', 'Severity and confidence', 'Recommended actions']}
+          title="Know what needs fixing from a few photos."
+          text="Upload up to four photos of the area you are checking. SiteLens flags visible safety hazards, defects and quality issues, rates how serious each one is, and recommends what to do, most urgent first."
           cta={WORKFLOWS[0]}
           visual={<InspectionOutput />}
         />
-        <FeatureSection
+        <Tool
           id="daily-report"
           reverse
-          kicker="AI daily reports"
-          title="Speak or type. The AI writes the report."
-          text="Jot down the day in your own words, or dictate it on site. SiteLens tidies your wording, then turns it into a structured daily report with tables, highlighted problems and recommended actions, and tells you what is missing."
-          tags={['Voice dictation', 'AI tidy-up', 'Live preview', 'Missing-info check', 'PDF and sharing']}
+          title="Speak or type. SiteLens writes the report."
+          text="Jot down the day in your own words, or dictate it on site. SiteLens tidies the wording, builds a structured daily report with tables, problems and recommended actions, and tells you what is missing. Later, ask questions about any past day."
           cta={WORKFLOWS[1]}
           visual={<DiaryVisual />}
         />
@@ -124,75 +125,69 @@ function Hero() {
   return (
     <section className="relative overflow-hidden bg-paper">
       <div className="bg-dots absolute inset-x-0 top-0 h-[560px] [mask-image:linear-gradient(to_bottom,black,transparent)]" aria-hidden="true" />
-      {/* Warm band the product showcase sits on. */}
-      <div className="absolute inset-x-0 bottom-0 h-[46%] bg-gradient-to-b from-transparent via-canvas to-amber/70 opacity-(--band-opacity)" aria-hidden="true" />
+      {/* Warm glow the product preview sits on. */}
+      <div className="absolute inset-x-0 bottom-0 h-[52%] bg-gradient-to-b from-transparent via-amber/10 to-amber/35" aria-hidden="true" />
 
-      <div className="relative mx-auto grid max-w-[1200px] justify-items-center gap-7 px-5 pt-20 text-center lg:px-8 lg:pt-24">
-        <span className="inline-flex items-center gap-2 rounded-full border border-line bg-paper px-3.5 py-1.5 text-[13px] text-heading shadow-sm">
+      <div className={cx(section, 'relative grid justify-items-center gap-6 pt-20 pb-14 text-center lg:pt-28')}>
+        <span className="fade-up inline-flex items-center gap-2 rounded-full border border-line bg-paper px-3.5 py-1.5 text-[13px] text-heading shadow-sm">
           <Icon name="sparkle" className="size-4 text-amber-deep" />
           Powered by Google Gemma AI
           <span className="h-3.5 w-px bg-line max-sm:hidden" aria-hidden="true" />
           <span className="text-muted max-sm:hidden">Free and open source</span>
         </span>
-        <h1 className="max-w-[24ch] font-display text-[60px] leading-[1.12] font-semibold tracking-[-0.012em] text-balance text-heading max-lg:text-[48px] max-sm:text-[36px] max-sm:leading-[1.15]">
+        <h1
+          className="fade-up max-w-[24ch] font-display text-[60px] leading-[1.12] font-semibold tracking-[-0.012em] text-balance text-heading max-lg:text-[48px] max-sm:text-[36px] max-sm:leading-[1.15]"
+          style={{ animationDelay: '80ms' }}
+        >
           Your AI assistant for site inspections and daily reports.
         </h1>
-        <p className="max-w-[62ch] text-[18px] leading-relaxed text-pretty text-muted max-sm:text-[16px]">
-          SiteLens uses AI to spot hazards and defects in your site photos, and to turn rough notes, typed or spoken, into a
-          structured daily report your manager can read in a minute.
+        <p
+          className="fade-up max-w-[58ch] text-[18px] leading-relaxed text-pretty text-muted max-sm:text-[16px]"
+          style={{ animationDelay: '160ms' }}
+        >
+          SiteLens uses Google’s Gemma AI to spot hazards and defects in site photos, and to turn rough notes, typed or spoken, into a
+          daily report your manager can read in a minute.
         </p>
-        <div className="flex flex-wrap justify-center gap-3 max-sm:w-full max-sm:flex-col">
-          <Link to="/app#inspect" className={pillPrimary}>
-            <Icon name="camera" />
+        <div className="fade-up mt-2 flex flex-wrap justify-center gap-3 max-sm:w-full max-sm:flex-col" style={{ animationDelay: '240ms' }}>
+          <Link to="/app#inspect" className={cx(buttonPrimary, 'shadow-[0_10px_24px_-12px_var(--amber)] hover:-translate-y-0.5')}>
+            <Icon name="camera" className="size-[18px]" />
             Inspect a site photo
           </Link>
-          <Link to="/app#diary" className={pillOutline}>
-            <Icon name="clipboard" />
+          <Link to="/app#diary" className={cx(buttonSecondary, 'bg-paper hover:-translate-y-0.5')}>
+            <Icon name="clipboard" className="size-[18px]" />
             Create a daily report
           </Link>
         </div>
-        <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-[13.5px] text-muted">
-          {['Free to use', 'No sign-up', 'Open source (MIT)', 'Works on your phone'].map((t) => (
-            <li key={t} className="flex items-center gap-1.5">
-              <Icon name="check" className="size-4 text-amber-deep" />
-              {t}
-            </li>
-          ))}
-        </ul>
+        <p className="fade-up text-[13.5px] text-muted" style={{ animationDelay: '320ms' }}>
+          Free and open source. No sign-up.
+        </p>
       </div>
 
-      <div className="relative mx-auto max-w-[1200px] px-5 pt-14 pb-24 lg:px-8 lg:pb-28">
-        <Showcase />
+      <div className={cx(section, 'relative pb-24')}>
+        <div className="fade-up" style={{ animationDelay: '420ms' }}>
+          <div className="float">
+            <Showcase />
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-function SectionIntro({ kicker, title, text, center }) {
-  return (
-    <div className={cx('grid gap-4', center && 'mx-auto max-w-[680px] text-center')}>
-      <p className={cx('flex items-center gap-2 text-[13px] font-medium text-amber-deep', center && 'justify-center')}>
-        <Icon name="sparkle" className="size-4" />
-        {kicker}
-      </p>
-      <h2 className="font-display text-[42px] leading-[1.08] font-semibold tracking-tight text-balance max-sm:text-[30px]">{title}</h2>
-      {text && <p className="text-[16.5px] leading-relaxed text-muted">{text}</p>}
-    </div>
-  );
-}
-
 function HowItWorks() {
   return (
-    <section id="how-it-works" className="scroll-mt-20 border-b border-line bg-canvas">
-      <div className="mx-auto grid max-w-[1200px] gap-12 px-5 py-20 lg:px-8 lg:py-24">
-        <SectionIntro center kicker="How it works" title="From site to finished report in three steps." />
-        <ol className="grid gap-4 md:grid-cols-3">
+    <section id="how-it-works" className="scroll-mt-20 border-t border-line bg-canvas">
+      <div className={cx(section, 'grid gap-12 py-24')}>
+        <Reveal>
+          <h2 className={cx(h2, 'max-w-[20ch]')}>From site to finished report in three steps.</h2>
+        </Reveal>
+        <ol className="grid gap-5 md:grid-cols-3">
           {STEPS.map(([title, text], i) => (
-            <li key={title} className="grid content-start gap-3 rounded-2xl border border-line bg-paper p-7">
+            <Reveal as="li" key={title} delay={i * 120} className="lift grid content-start gap-3 rounded-2xl border border-line bg-paper p-7">
               <span className="grid size-10 place-items-center rounded-full bg-amber text-[15px] font-semibold text-amber-ink">{i + 1}</span>
-              <h3 className="text-[17px] font-semibold">{title}</h3>
-              <p className="text-[14.5px] leading-relaxed text-muted">{text}</p>
-            </li>
+              <h3 className="text-[18px] font-semibold">{title}</h3>
+              <p className="text-[15px] leading-relaxed text-muted">{text}</p>
+            </Reveal>
           ))}
         </ol>
       </div>
@@ -200,38 +195,38 @@ function HowItWorks() {
   );
 }
 
-function FeatureSection({ id, kicker, title, text, tags, cta, visual, reverse }) {
+function Tool({ id, title, text, cta, visual, reverse }) {
   return (
-    <section id={id} className={cx('scroll-mt-20 border-b border-line', reverse ? 'bg-canvas' : 'bg-paper')}>
-      <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-5 py-20 lg:grid-cols-2 lg:gap-20 lg:px-8 lg:py-24">
-        <div className={cx('grid content-start gap-6', reverse && 'lg:order-2')}>
-          <SectionIntro kicker={kicker} title={title} text={text} />
-          <ul className="flex flex-wrap gap-2">
-            {tags.map((t) => (
-              <li key={t} className="rounded-full border border-line bg-paper px-3 py-1 text-[13px] text-heading">
-                {t}
-              </li>
-            ))}
-          </ul>
-          <div>
-            <Link to={`/app#${cta.id}`} className={pillPrimary}>
+    <section id={id} className={cx('scroll-mt-20 border-t border-line', reverse ? 'bg-canvas' : 'bg-paper')}>
+      <div className={cx(section, 'grid grid-cols-[minmax(0,1fr)] items-center gap-12 py-24 lg:grid-cols-2 lg:gap-20')}>
+        <Reveal className={cx('grid content-start gap-5', reverse && 'lg:order-2')}>
+          <span className="grid size-11 place-items-center rounded-xl bg-amber-soft text-amber-deep">
+            <Icon name={cta.icon} className="size-5" />
+          </span>
+          <p className="text-[14px] font-medium text-amber-deep">{cta.label}</p>
+          <h2 className={h2}>{title}</h2>
+          <p className="max-w-[52ch] text-[16.5px] leading-relaxed text-muted">{text}</p>
+          <div className="mt-2">
+            <Link to={`/app#${cta.id}`} className={cx(buttonPrimary, 'max-sm:w-full')}>
               {cta.cta}
+              <Icon name="arrow" className="size-4" />
             </Link>
           </div>
-        </div>
-        <div className={cx('rounded-3xl p-8 max-sm:p-4', reverse ? 'bg-paper-2' : 'bg-canvas', reverse && 'lg:order-1')}>{visual}</div>
+        </Reveal>
+        <Reveal delay={150} className={cx('rounded-3xl p-8 max-sm:p-4', reverse ? 'bg-paper-2' : 'bg-canvas', reverse && 'lg:order-1')}>
+          <div className="lift rounded-xl shadow-[0_30px_60px_-35px_rgb(15_23_42/0.45)]">{visual}</div>
+        </Reveal>
       </div>
     </section>
   );
 }
 
-// A compact view of a finished daily report for the feature section.
 function DiaryVisual() {
   return (
-    <div className="mx-auto grid max-w-[460px] gap-4 rounded-xl border border-line bg-paper p-5 shadow-[0_30px_60px_-35px_rgb(15_23_42/0.4)]">
+    <div className="mx-auto grid max-w-[460px] gap-4 rounded-xl border border-line bg-paper p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[11.5px] text-muted">Daily site report, Saturday 31 October</p>
+          <p className="text-[12px] text-muted">Daily site report, Saturday 31 October</p>
           <p className="font-display text-[22px] leading-tight font-semibold text-heading">Lekki Residences, Block B</p>
         </div>
         <Chip tone="medium">Minor delays</Chip>
@@ -244,13 +239,13 @@ function DiaryVisual() {
         ].map(([v, k]) => (
           <div key={k} className="px-3 py-2.5">
             <dd className="text-[20px] leading-none font-semibold text-heading tabular-nums">{v}</dd>
-            <dt className="mt-1 text-[11px] text-muted">{k}</dt>
+            <dt className="mt-1 text-[11.5px] text-muted">{k}</dt>
           </div>
         ))}
       </dl>
-      <table className="w-full text-[12.5px]">
+      <table className="w-full text-[13px]">
         <thead>
-          <tr className="border-b border-line text-left text-[11px] text-muted">
+          <tr className="border-b border-line text-left text-[11.5px] text-muted">
             <th className="py-1.5 font-medium">Activity</th>
             <th className="py-1.5 font-medium">Status</th>
             <th className="py-1.5 text-right font-medium">Done</th>
@@ -273,15 +268,12 @@ function DiaryVisual() {
           </tr>
         </tbody>
       </table>
-      <div className="flex items-center justify-between gap-3 rounded-r-md border-l-[3px] border-l-high bg-paper-2 py-2 pr-2 pl-3">
-        <span className="text-[12.5px] font-medium text-heading">Slab rebar inspection not booked</span>
-        <Chip tone="high" solid>
-          High
-        </Chip>
+      <div className="flex items-center justify-between gap-3 border-l-2 border-l-high py-1 pl-3">
+        <span className="text-[13px] font-medium text-heading">Slab rebar inspection not booked</span>
+        <Chip tone="high">High</Chip>
       </div>
-      <p className="flex items-start gap-2 rounded-md bg-amber-soft px-3 py-2 text-[12px] text-ink">
-        <Icon name="sparkle" className="mt-0.5 size-3.5 text-amber-deep" />
-        Your notes don’t say how many hours the afternoon labourers worked.
+      <p className="border-t border-line pt-3 text-[12.5px] text-muted">
+        Missing from your notes: how many hours the afternoon labourers worked.
       </p>
     </div>
   );
@@ -289,23 +281,26 @@ function DiaryVisual() {
 
 function Features() {
   return (
-    <section id="features" className="scroll-mt-20 border-b border-line bg-paper">
-      <div className="mx-auto grid max-w-[1200px] gap-12 px-5 py-20 lg:px-8 lg:py-24">
-        <SectionIntro
-          center
-          kicker="Features"
-          title="Everything you need to report from site."
-          text="Two AI tools, built for patchy signal, busy days and a manager waiting for the report."
-        />
-        <ul className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
-          {FEATURES.map(([icon, title, text]) => (
-            <li key={title} className="grid content-start gap-3 bg-paper p-6">
+    <section id="features" className="scroll-mt-20 border-t border-line bg-paper">
+      <div className={cx(section, 'grid gap-12 py-24')}>
+        <Reveal className="mx-auto grid max-w-[640px] gap-4 text-center">
+          <h2 className={h2}>Everything you need to report from site.</h2>
+          <p className="text-[16.5px] leading-relaxed text-muted">Built for patchy signal, busy days and a manager waiting for the report.</p>
+        </Reveal>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {FEATURES.map(([icon, title, text], i) => (
+            <Reveal
+              as="li"
+              key={title}
+              delay={(i % 3) * 90}
+              className="lift grid content-start gap-3 rounded-2xl border border-line bg-paper p-6 hover:border-amber/40"
+            >
               <span className="grid size-10 place-items-center rounded-xl bg-amber-soft text-amber-deep">
                 {icon === 'github' ? <GithubIcon className="size-[18px]" /> : <Icon name={icon} className="size-[18px]" />}
               </span>
-              <h3 className="text-[15.5px] font-semibold">{title}</h3>
-              <p className="text-[14px] leading-relaxed text-muted">{text}</p>
-            </li>
+              <h3 className="text-[16px] font-semibold">{title}</h3>
+              <p className="text-[14.5px] leading-relaxed text-muted">{text}</p>
+            </Reveal>
           ))}
         </ul>
       </div>
@@ -315,48 +310,30 @@ function Features() {
 
 function OpenSource() {
   return (
-    <section id="open-source" className="scroll-mt-20 bg-navy text-white">
-      <div className="mx-auto grid max-w-[1200px] items-center gap-12 px-5 py-20 lg:grid-cols-2 lg:px-8 lg:py-24">
-        <div className="grid content-start gap-6">
-          <p className="flex items-center gap-2 text-[13px] font-medium text-amber">
-            <GithubIcon className="size-4" />
-            Open source
+    <section id="open-source" className="scroll-mt-20 border-t border-line bg-paper">
+      <div className={cx(section, 'grid grid-cols-[minmax(0,1fr)] items-center gap-12 py-24 lg:grid-cols-2 lg:gap-20')}>
+        <Reveal className="grid content-start gap-5">
+          <h2 className={h2}>Free to use. Open source.</h2>
+          <p className="max-w-[50ch] text-[16.5px] leading-relaxed text-muted">
+            SiteLens is released under the MIT licence. Read the code, run your own copy, report an issue or help build the next
+            feature.
           </p>
-          <h2 className="font-display text-[42px] leading-[1.08] font-semibold tracking-tight text-white max-sm:text-[30px]">
-            Free to use. Open for everyone.
-          </h2>
-          <p className="max-w-[52ch] text-[16.5px] leading-relaxed text-white/70">
-            SiteLens is free and open source under the MIT licence. Read the code, run your own copy, report an issue or help build
-            the next feature.
-          </p>
-          <div className="flex flex-wrap gap-3">
-            <a href={REPO_URL} target="_blank" rel="noreferrer" className={cx(pill, 'bg-white text-[#0f172a] hover:bg-white/90')}>
-              <GithubIcon />
+          <div className="mt-2 flex flex-wrap gap-3">
+            <a href={REPO_URL} target="_blank" rel="noreferrer" className={buttonSecondary}>
+              <GithubIcon className="size-[18px]" />
               View on GitHub
             </a>
-            <a href={`${REPO_URL}/issues`} target="_blank" rel="noreferrer" className={cx(pill, 'border border-white/25 text-white hover:bg-white/10')}>
+            <a href={`${REPO_URL}/issues`} target="_blank" rel="noreferrer" className={cx(button, 'text-muted hover:text-heading')}>
               Report an issue
             </a>
           </div>
-        </div>
-        <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/30 font-mono text-[13px]">
-          <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-3" aria-hidden="true">
-            <span className="size-2.5 rounded-full bg-white/20" />
-            <span className="size-2.5 rounded-full bg-white/20" />
-            <span className="size-2.5 rounded-full bg-white/20" />
-          </div>
-          <pre className="overflow-x-auto p-5 leading-relaxed text-white/85">
-            <span className="text-white/40"># Run SiteLens on your own computer</span>
-            {'\n'}
-            <span className="text-amber">$</span> git clone {REPO_URL}.git
-            {'\n'}
-            <span className="text-amber">$</span> cd SiteLens
-            {'\n'}
-            <span className="text-amber">$</span> npm install
-            {'\n'}
-            <span className="text-amber">$</span> npm run dev
-          </pre>
-        </div>
+        </Reveal>
+        <pre className="overflow-x-auto rounded-xl border border-line bg-canvas p-6 font-mono text-[13px] leading-relaxed text-ink">
+          <span className="text-muted">$</span> git clone {REPO_URL}.git{'\n'}
+          <span className="text-muted">$</span> cd SiteLens{'\n'}
+          <span className="text-muted">$</span> npm install{'\n'}
+          <span className="text-muted">$</span> npm run dev
+        </pre>
       </div>
     </section>
   );
@@ -364,17 +341,19 @@ function OpenSource() {
 
 function Faq() {
   return (
-    <section className="border-b border-line bg-canvas">
-      <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-20 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:px-8 lg:py-24">
-        <SectionIntro kicker="Questions" title="Good to know." />
-        <div className="divide-y divide-line rounded-2xl border border-line bg-paper">
+    <section className="border-t border-line bg-canvas">
+      <div className={cx(section, 'grid gap-10 py-24 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]')}>
+        <h2 className={h2}>Questions</h2>
+        <div className="divide-y divide-line border-y border-line">
           {FAQ.map(([q, a]) => (
-            <details key={q} className="group px-6 py-5">
+            <details key={q} className="group py-5">
               <summary className="flex cursor-pointer items-center justify-between gap-4 text-[16px] font-semibold text-heading">
                 {q}
-                <Icon name="chevron" className="size-4 text-muted transition-transform group-open:rotate-180" />
+                <span className="text-[20px] leading-none font-normal text-muted transition-transform group-open:rotate-45" aria-hidden="true">
+                  +
+                </span>
               </summary>
-              <p className="mt-3 text-[15px] leading-relaxed text-muted">{a}</p>
+              <p className="mt-3 max-w-[60ch] text-[15px] leading-relaxed text-muted">{a}</p>
             </details>
           ))}
         </div>
@@ -385,86 +364,44 @@ function Faq() {
 
 function ClosingCta() {
   return (
-    <section className="bg-canvas px-5 py-20 lg:px-8">
-      <div className="mx-auto grid max-w-[1200px] justify-items-center gap-5 rounded-3xl bg-gradient-to-br from-[#ff6900] to-[#e65a33] px-6 py-16 text-center">
-        <h2 className="max-w-[22ch] font-display text-[40px] leading-[1.08] font-semibold text-[#0f172a] max-sm:text-[30px]">
+    <section className="border-t border-line bg-canvas px-5 py-20 lg:px-8">
+      <Reveal className="relative mx-auto grid max-w-[1120px] justify-items-center gap-5 overflow-hidden rounded-3xl bg-gradient-to-br from-[#ff6900] to-[#e65a33] px-6 py-16 text-center">
+        <div className="bg-dots absolute inset-0 opacity-30 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" aria-hidden="true" />
+        <h2 className="relative max-w-[22ch] font-display text-[40px] leading-[1.12] font-semibold text-[#0f172a] max-sm:text-[30px]">
           Finish the report before you leave the site.
         </h2>
-        <p className="max-w-[52ch] text-[16px] text-[#0f172a]/80">Free to use, no sign-up. Open it in your browser, or install it on your phone.</p>
-        <Link to="/app" className={cx(pill, 'bg-[#0f172a] text-white hover:bg-[#1e293b]')}>
+        <p className="relative text-[16.5px] text-[#0f172a]/80">Free to use, no sign-up. Open it in your browser or install it on your phone.</p>
+        <Link to="/app" className={cx(button, 'relative mt-2 bg-[#0f172a] text-white hover:-translate-y-0.5 hover:bg-[#1e293b]')}>
           Open workspace
+          <Icon name="arrow" className="size-4" />
         </Link>
-      </div>
+      </Reveal>
     </section>
   );
 }
 
 function Footer() {
-  const columns = [
-    [
-      'Product',
-      [
-        ['Photo inspection', '/app#inspect', 'app'],
-        ['Daily report', '/app#diary', 'app'],
-        ['Features', '#features'],
-      ],
-    ],
-    [
-      'Open source',
-      [
-        ['GitHub', REPO_URL, 'external'],
-        ['Report an issue', `${REPO_URL}/issues`, 'external'],
-        ['MIT licence', `${REPO_URL}/blob/main/LICENSE`, 'external'],
-      ],
-    ],
-  ];
-
   return (
-    <footer className="border-t border-line bg-paper">
-      <div className="mx-auto grid max-w-[1200px] gap-10 px-5 py-14 md:grid-cols-[minmax(0,1.4fr)_repeat(2,minmax(0,1fr))] lg:px-8">
-        <div className="grid content-start gap-4">
+    <footer className="border-t border-line bg-canvas">
+      <div className={cx(section, 'flex flex-wrap items-center justify-between gap-6 py-10')}>
+        <div className="grid gap-2">
           <Brand />
-          <p className="max-w-[40ch] text-[14px] leading-relaxed text-muted">
-            AI site inspections and daily reports for site engineers, supervisors and construction managers.
-          </p>
-          <a
-            href={REPO_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex w-fit items-center gap-2 rounded-full border border-line px-3.5 py-1.5 text-[13.5px] font-medium text-heading hover:bg-paper-2"
-          >
-            <GithubIcon className="size-4" />
-            Star on GitHub
-          </a>
+          <p className="text-[13.5px] text-muted">© {new Date().getFullYear()} SiteLens. Open source under the MIT licence.</p>
         </div>
-        {columns.map(([heading, links]) => (
-          <div key={heading} className="grid content-start gap-3">
-            <h3 className="text-[13px] font-semibold text-heading">{heading}</h3>
-            <ul className="grid gap-2 text-[14px] text-muted">
-              {links.map(([label, href, kind]) => (
-                <li key={label}>
-                  {kind === 'app' ? (
-                    <Link to={href} className="hover:text-heading">
-                      {label}
-                    </Link>
-                  ) : (
-                    <a href={href} className="hover:text-heading" {...(kind === 'external' ? { target: '_blank', rel: 'noreferrer' } : {})}>
-                      {label}
-                    </a>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </div>
-      <div className="border-t border-line">
-        <div className="mx-auto flex max-w-[1200px] flex-wrap items-center justify-between gap-3 px-5 py-6 text-[13px] text-muted lg:px-8">
-          <span>© {new Date().getFullYear()} SiteLens. Free and open source under the MIT licence.</span>
+        <nav className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[14px] text-muted" aria-label="Footer">
+          <Link to="/app#inspect" className="hover:text-heading">
+            Photo inspection
+          </Link>
+          <Link to="/app#diary" className="hover:text-heading">
+            Daily report
+          </Link>
+          <a href={`${REPO_URL}/blob/main/LICENSE`} target="_blank" rel="noreferrer" className="hover:text-heading">
+            MIT licence
+          </a>
           <a href={REPO_URL} target="_blank" rel="noreferrer" className="text-heading hover:text-amber-deep" aria-label="SiteLens on GitHub">
             <GithubIcon />
           </a>
-        </div>
+        </nav>
       </div>
     </footer>
   );

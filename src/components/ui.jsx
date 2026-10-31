@@ -28,6 +28,14 @@ const ICONS = {
   stop: 'M7 7h10v10H7z',
   sparkle: 'M12 3.5l1.8 5.2 5.2 1.8-5.2 1.8L12 17.5l-1.8-5.2L5 10.5l5.2-1.8L12 3.5ZM18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7.7-1.8Z',
   undo: 'M9 14 4.5 9.5 9 5M4.5 9.5H15a5 5 0 0 1 0 10h-3',
+  ruler: 'M3.5 15.5 15.5 3.5l5 5-12 12zM7 12l2 2M9.5 9.5l1.5 1.5M12 7l2 2M14.5 4.5l1.5 1.5',
+  area: 'M5 6.5 15 4l5 7-4 8.5-11-2.5zM5 6.5v0',
+  count: 'M12 21s-5.5-5-5.5-9.5a5.5 5.5 0 0 1 11 0C17.5 16 12 21 12 21ZM12 13.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z',
+  hand: 'M8 12.5V6a1.5 1.5 0 0 1 3 0v5.5M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V6a1.5 1.5 0 0 1 3 0v7.5a7 7 0 0 1-7 7h-.5a6 6 0 0 1-4.6-2.2L3 15.5a1.6 1.6 0 0 1 2.4-2.1L8 15.5',
+  minus: 'M5 12h14',
+  fit: 'M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5',
+  scale: 'M3 17h18M3 14v6M21 14v6M12 15v5M7.5 16v4M16.5 16v4M7 4l-3 3 3 3M17 4l3 3-3 3M4 7h16',
+  plan: 'M4 4.5h16v15H4zM4 10h7v9.5M11 4.5V7M15 10h5M15 10v4',
 };
 
 export function Icon({ name, className = 'size-[18px]' }) {
@@ -199,12 +207,9 @@ export const Bullets = ({ items }) => (
 export function DocHeader({ kind, title, cells, status }) {
   return (
     <header className="avoid-break grid gap-4">
-      <div className="flex items-center justify-between gap-3 border-b-2 border-line-strong pb-2 font-mono text-[11px] tracking-wide text-muted">
-        <span className="flex items-center gap-2 text-heading">
-          <span className="size-2 rounded-[2px] bg-amber" aria-hidden="true" />
-          SITELENS
-        </span>
-        <span>{kind.toUpperCase()}</span>
+      <div className="flex items-center justify-between gap-3 border-b-2 border-line-strong pb-2 text-[12.5px] text-muted">
+        <span className="font-semibold text-heading">SiteLens</span>
+        <span>{kind}</span>
       </div>
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
         <h2 className="min-w-0 font-display text-[32px] leading-[1.05] font-semibold tracking-tight break-words max-sm:text-[26px]">{title}</h2>
@@ -227,7 +232,7 @@ export function DocHeader({ kind, title, cells, status }) {
               i === cells.length - 1 && i % 2 === 0 && 'max-sm:col-span-2',
             )}
           >
-            <dt className="font-mono text-[10.5px] tracking-wide text-muted uppercase">{k}</dt>
+            <dt className="text-[12px] text-muted">{k}</dt>
             <dd className="text-[13.5px] leading-snug font-medium break-words text-heading">{v || '—'}</dd>
           </div>
         ))}
@@ -241,7 +246,7 @@ export function DocSection({ n, title, count, children }) {
   return (
     <section className="avoid-break grid gap-3">
       <h3 className="flex items-baseline gap-2.5 border-b border-line pb-2 font-display text-[19px] font-semibold">
-        <span className="w-6 font-mono text-[12px] text-amber-deep tabular-nums">{String(n).padStart(2, '0')}</span>
+        <span className="w-6 text-[15px] font-normal text-muted tabular-nums">{n}.</span>
         <span className="flex-1">{title}</span>
         {count != null && <Count>{count}</Count>}
       </h3>

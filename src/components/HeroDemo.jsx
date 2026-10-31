@@ -42,30 +42,29 @@ export default function HeroDemo() {
 
   return (
     <figure
-      className="overflow-hidden rounded-md border border-line bg-paper shadow-[0_30px_60px_-30px_rgb(15_23_42/0.35)]"
+      className="overflow-hidden rounded-lg border border-line bg-paper"
       aria-label="Example: rough site notes turned into a daily report"
     >
-      <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 font-mono text-[11px] tracking-wide text-muted">
-        <span className="text-heading">SHEET 01 · DAILY REPORT</span>
-        <span className="max-sm:hidden">LEKKI RES. BLOCK B</span>
+      <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 text-[12.5px] text-muted">
+        <span className="font-medium text-heading">Daily report</span>
         <span className="flex items-center gap-1.5">
           <span className={cx('size-1.5 rounded-full', writing ? 'bg-amber' : 'bg-low')} />
-          {writing ? 'WRITING' : 'READY'}
+          {writing ? 'Writing' : 'Ready'}
         </span>
       </div>
 
-      <div className="border-b border-line bg-paper-2/60 px-4 py-3 font-mono text-[12.5px] leading-relaxed text-ink">
-        <span className="text-amber-deep">&gt; </span>
+      <div className="border-b border-line bg-canvas px-4 py-3 text-[13px] leading-relaxed text-ink">
+        <span className="text-muted">Notes: </span>
         {NOTE.slice(0, typed)}
-        {typed < NOTE.length && <span className="caret ml-px inline-block h-[1.05em] w-[7px] translate-y-[2px] bg-amber-deep" />}
+        {typed < NOTE.length && <span className="caret ml-px inline-block h-[1.05em] w-[2px] translate-y-[2px] bg-heading" />}
       </div>
 
-      <div className="bg-sheet-grid relative min-h-[300px] p-5 sm:min-h-[330px]">
-        <div className="grid gap-4 rounded-sm bg-paper/92 p-4 backdrop-blur-[1px]">
+      <div className="min-h-[300px] p-5 sm:min-h-[330px]">
+        <div className="grid gap-4">
           {stage >= 1 && (
             <div className="rise flex items-start justify-between gap-3">
               <div>
-                <p className="font-mono text-[10.5px] tracking-wide text-muted">SAT 31 OCT 2026 · A. OKAFOR</p>
+                <p className="text-[12px] text-muted">Saturday 31 October 2026, A. Okafor</p>
                 <p className="font-display text-[22px] leading-tight font-semibold text-heading">Lekki Residences, Block B</p>
               </div>
               <Chip tone="medium">Minor delays</Chip>
@@ -89,15 +88,13 @@ export default function HeroDemo() {
           )}
           {ISSUES.map(([title, sev, tone], i) =>
             stage >= 4 + i ? (
-              <div key={title} className={cx('rise flex items-center justify-between gap-3 border-l-[3px] bg-paper-2/70 py-2 pr-2 pl-3', tone === 'high' ? 'border-l-high' : 'border-l-medium')}>
+              <div key={title} className={cx('rise flex items-center justify-between gap-3 border-l-2 py-1 pl-3', tone === 'high' ? 'border-l-high' : 'border-l-medium')}>
                 <span className="text-[13px] font-medium text-heading">{title}</span>
-                <Chip tone={tone} solid>
-                  {sev}
-                </Chip>
+                <Chip tone={tone}>{sev}</Chip>
               </div>
             ) : null,
           )}
-          {stage === 0 && <p className="font-mono text-[12px] text-muted">Waiting for notes…</p>}
+          {stage === 0 && <p className="text-[13px] text-muted">Waiting for notes…</p>}
         </div>
       </div>
     </figure>

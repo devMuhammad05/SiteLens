@@ -60,7 +60,6 @@
   --high: #ea580c;
   --critical: #b91c1c;
   --sev-ink: #ffffff;
-  --band-opacity: 1;
 }
 
 /* Dark theme: chosen with the header toggle (data-theme on <html>), otherwise follows the system. */
@@ -86,7 +85,6 @@
   --high: #fb7c3c;
   --critical: #f87171;
   --sev-ink: #0b1120;
-  --band-opacity: 0.4;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -112,24 +110,25 @@
     --high: #fb7c3c;
     --critical: #f87171;
     --sev-ink: #0b1120;
-    --band-opacity: 0.4;
   }
-}
-
-/* Drawing-sheet grid, used on the hero demo sheet. */
-@utility bg-sheet-grid {
-  background-image:
-    linear-gradient(var(--line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--line) 1px, transparent 1px);
-  background-size: 32px 32px;
-  background-position: -1px -1px;
 }
 
 /* Faint dot pattern behind the landing hero. */
 @utility bg-dots {
-  background-image: radial-gradient(color-mix(in srgb, var(--muted) 30%, transparent) 1px, transparent 1.2px);
+  background-image: radial-gradient(color-mix(in srgb, var(--muted) 28%, transparent) 1px, transparent 1.2px);
   background-size: 22px 22px;
 }
+
+/* ---- Motion (all of it is switched off for people who prefer reduced motion) ---- */
+@keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+.fade-up { animation: fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.float { animation: float 7s ease-in-out infinite; }
+/* Content that fades up the first time it scrolls into view (see Reveal.jsx). */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.reveal.is-visible { opacity: 1; transform: none; }
+.lift { transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+.lift:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -24px rgb(15 23 42 / 0.35); }
 
 @keyframes caret { 50% { opacity: 0; } }
 @keyframes rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -154,7 +153,9 @@
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .animate-indeterminate, .animate-spin { animation-duration: 3s; }
-  .caret, .rise { animation: none; }
+  .caret, .rise, .fade-up, .float { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .lift, .lift:hover { transform: none; transition: none; }
 }
 
 @media print {
@@ -169,6 +170,7 @@
   .print-plain { border: 0 !important; padding: 0 !important; box-shadow: none !important; max-height: none !important; overflow: visible !important; position: static !important; }
   .print-block { display: block !important; }
   .avoid-break { break-inside: avoid; }
+  .reveal { opacity: 1 !important; transform: none !important; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   @page { margin: 14mm; }
 }

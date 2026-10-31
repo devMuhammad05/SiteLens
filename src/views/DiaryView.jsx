@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import DiaryReport from '../components/DiaryReport.jsx';
 import DiaryDraft from '../components/DiaryDraft.jsx';
 import NoteField from '../components/NoteField.jsx';
+import AskReports from '../components/AskReports.jsx';
 import { appendPhrase } from '../lib/speech.js';
 import {
   Button,
@@ -313,6 +314,7 @@ export default function DiaryView() {
           </footer>
         </section>
 
+        <AskReports diaries={diaries} onOpen={open} />
         <PastReports diaries={diaries} currentId={entry.id} onOpen={open} onDelete={remove} />
       </div>
 

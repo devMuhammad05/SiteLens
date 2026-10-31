@@ -4,8 +4,8 @@ AI site inspections and daily reports for site engineers, supervisors and constr
 
 SiteLens has two tools:
 
-- **Site photo inspection.** Upload a photo of a construction site. SiteLens identifies what is in it and lists visible safety hazards, defects and quality issues, and site conditions. Each finding has a severity (Low to Critical), a confidence score and a recommended action. You get a printable report with the actions ordered by urgency.
-- **Daily site report.** Write the day's notes in your own words, or dictate them. SiteLens turns them into a structured daily site report: summary, work completed, labour and equipment, deliveries and visitors, site conditions, problems and delays, safety, recommended actions and the plan for tomorrow. It also tells you what a daily report normally needs that your notes left out.
+- **Site photo inspection.** Upload up to four photos of one area of a construction site. SiteLens writes one combined report: it identifies what is in the photos and lists visible safety hazards, defects and quality issues, and site conditions. Each finding has a severity (Low to Critical), a confidence score and a recommended action. You get a printable report with the actions ordered by urgency.
+- **Daily site report.** Write the day's notes in your own words, or dictate them. SiteLens turns them into a structured daily site report: summary, work completed, labour and equipment, deliveries and visitors, site conditions, problems and delays, safety, recommended actions and the plan for tomorrow. It also tells you what a daily report normally needs that your notes left out, and you can ask questions about your saved reports.
 
 The AI is Google's Gemma, called through the Gemini API with your own key. SiteLens runs entirely in the browser. There is no backend and no account.
 
@@ -58,13 +58,13 @@ The key is stored in your browser's `localStorage`, on that device only. To remo
 
 ### Site photo inspection (`/app#inspect`)
 
-1. Drag a photo into the drop area or choose a file. JPG, PNG and WEBP up to 15 MB are accepted.
+1. Drag photos into the drop area or choose files. Add up to 4 photos of the same area; JPG, PNG and WEBP up to 15 MB each are accepted. Remove any photo with its × button.
 2. Optionally add the site name, your name and the date. They appear at the top of the report.
-3. Select **Check this photo**.
-4. Review the report: summary, what is in the photo, findings grouped into safety hazards, defects and quality issues, and site conditions and activities, then recommended actions ordered by severity.
+3. Select **Check this photo** (or **Check these N photos**). Several photos are analysed together into one report.
+4. Review the report: summary, what is in the photos, findings grouped into safety hazards, defects and quality issues, and site conditions and activities, then recommended actions ordered by severity. With several photos, each finding says which photo(s) it is seen in.
 5. Select **Download PDF** to open the browser's print dialog, then choose "Save as PDF". **Download report data (JSON)** exports the raw result.
 
-Use a clear, well-lit photo taken close to the area of concern, and check one area per photo.
+Use clear, well-lit photos taken close to the area of concern. Keep all photos in one check to the same area.
 
 ### Daily site report (`/app#diary`)
 
@@ -80,11 +80,19 @@ Use a clear, well-lit photo taken close to the area of concern, and check one ar
 
 If you edit your notes after creating a report, the preview shows **Notes changed** and an **Update report** link. Up to 60 reports are kept, newest date first.
 
+### Ask your reports
+
+Below the notes form, **Ask your reports** answers questions about the reports saved on this device, for example "When did we last pour concrete?" or "How many hours did we lose to rain this month?". The answer lists the reports it came from; select one to open it.
+
+- Answers use only your saved reports. If they don't contain the answer, SiteLens says so.
+- Reports don't record when a problem was fixed, so for "still open" questions the answer says when the problem was last reported and whether a later report mentions it being resolved.
+- It needs an AI key; there are no example answers.
+
 ### Installing on a phone or computer
 
 SiteLens is a Progressive Web App. In Chrome and Edge, an **Install app** button appears in the workspace header. On iPhone and iPad, open the site in Safari and use **Share → Add to Home Screen**. Installing only works on the built app served over HTTPS or `localhost` (see [Deployment](#deployment)).
 
-When offline, you can still open the app, write notes and read past reports. Checking photos, creating reports, tidying notes, dictation and the weather lookup all need a connection.
+When offline, you can still open the app, write notes and read past reports. Checking photos, creating reports, tidying notes, asking questions, dictation and the weather lookup all need a connection.
 
 ## Configuration
 
@@ -124,14 +132,15 @@ src/
     WorkspacePage.jsx      Workspace header, tool switcher, AI key panel, offline notice
   views/
     InspectionView.jsx     Photo inspection workflow
-    DiaryView.jsx          Daily report workflow and past reports
+    DiaryView.jsx          Daily report workflow, past reports and Ask your reports
   components/
     ui.jsx                 Shared building blocks: buttons, fields, chips, report sections, icons
     Results.jsx            Photo inspection report
     DiaryReport.jsx        Finished daily report
     DiaryDraft.jsx         Live draft preview built from the notes
     NoteField.jsx          Notes box with dictation and AI tidy-up
-    UploadZone.jsx         Photo drop area and validation
+    UploadZone.jsx         Photo drop area (up to 4 photos) and validation
+    AskReports.jsx         Question box over saved reports
     AiKeyPanel.jsx         Add, check and remove the AI key
     ThemeToggle.jsx        Light and dark mode switch
     Brand.jsx              Logo, tool list, GitHub link
@@ -140,7 +149,8 @@ src/
   lib/
     gemma.js               Gemini API client: requests, retries, JSON parsing
     aiKey.js               Reading, saving and checking the AI key
-    analyse.js             Photo inspection prompt and result normalising
+    analyse.js             Photo inspection prompt (one or several photos) and result normalising
+    ask.js                 Ask your reports: compact report context, prompt and sources
     diary.js               Daily report prompt, tidy-up, weather, saved reports, text export
     demo.js                Example results used when no key is set
     speech.js              Voice dictation (browser speech recognition)
@@ -155,7 +165,8 @@ TODO.md                    PRD breakdown and status
 
 - **No backend.** The app is static files. AI requests go straight from the browser to `https://generativelanguage.googleapis.com/v1beta/models/<model>:generateContent`, with the key in the `x-goog-api-key` header.
 - **Structured output.** Each prompt asks Gemma for a JSON object with a fixed shape (`SCHEMA` in `src/lib/diary.js`, `PROMPT` in `src/lib/analyse.js`). `gemma.js` extracts the JSON from the reply, and `normaliseResult` and `normaliseDiary` fill in defaults and clamp values, so the UI doesn't depend on the model returning perfect data.
-- **Photos** are downscaled to at most 2048 px on the longest side and re-encoded as JPEG before upload.
+- **Photos** are downscaled before upload and re-encoded as JPEG: at most 2048 px on the longest side for one photo, 1600 px each when several are sent together. Several photos go in one request, each labelled "Photo 1", "Photo 2" and so on, and every finding returns the photo numbers it was seen in.
+- **Ask your reports** sends a compact version of every saved report (with short ids such as `r1`) and the question in one request. The AI must cite the ids it used, which SiteLens maps back to the saved reports to show as sources.
 - **Retries and fallback.** Server errors (HTTP 5xx) and rate limits (HTTP 429) are retried. If you set `VITE_GEMMA_MODEL` to another model and it fails with one of those errors, SiteLens falls back to `gemma-4-26b-a4b-it`. Requests use `temperature: 0.2` for consistent output.
 - **Example mode.** With no key saved, `analyseImage` and `generateDiary` return the sample data in `src/lib/demo.js`, and the reports say they are examples.
 - **Routing.** `/` is the landing page and `/app` is the workspace; the hash picks the tool (`#inspect` or `#diary`). Older links such as `/#diary` redirect to `/app#diary`. Once opened, the workspace stays mounted, so going back to the landing page doesn't lose unsaved notes.
@@ -167,6 +178,7 @@ TODO.md                    PRD breakdown and status
 | --- | --- |
 | Photos you check | Sent to Google's Gemini API with your key. |
 | Notes, when you create a report or tidy a section | Sent to Google's Gemini API with your key. |
+| Your saved reports and your question, when you use Ask your reports | Sent to Google's Gemini API with your key. |
 | Your voice, when dictating | Handled by the browser's speech recognition. Chrome and Edge send the audio to their own speech service. |
 | Your location, when you fill in the weather | Your coordinates are sent to [Open-Meteo](https://open-meteo.com/) to look up the forecast. |
 | AI key, saved reports, last project and name, theme | Stored only in your browser, under the `localStorage` keys `sitelens-ai-key`, `sitelens.diaries.v1`, `sitelens.profile.v1` and `sitelens-theme`. |
@@ -221,7 +233,7 @@ Dictation uses your device language if it is a form of English, otherwise Britis
 
 ## Limitations
 
-- Photo findings are a first look based on a single image. They don't replace an on-site inspection or professional judgement.
+- Photo findings are a first look based on what is visible in the photos. They don't replace an on-site inspection or professional judgement.
 - Saved reports live in one browser on one device. There is no sync or sharing between people.
 - With no backend, the AI key is used directly from the browser. That suits a personal key, not a shared organisation key.
 - There are no automated tests yet.

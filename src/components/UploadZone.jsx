@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import { Button, Icon, cx } from './ui.jsx';
+import { Icon, cx } from './ui.jsx';
 
 export const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const ACCEPT_ATTR = '.jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp';
@@ -10,25 +10,31 @@ const formatSize = (bytes) =>
 
 export function validateImage(file) {
   if (!file) return 'No file selected.';
-  if (!ACCEPTED_TYPES.includes(file.type)) return 'That file type is not supported. Use a JPG, PNG or WEBP photo.';
-  if (file.size > MAX_BYTES) return 'That photo is larger than 15 MB. Choose a smaller one.';
+  if (!ACCEPTED_TYPES.includes(file.type)) return `${file.name} is not a JPG, PNG or WEBP photo.`;
+  if (file.size > MAX_BYTES) return `${file.name} is larger than 15 MB.`;
   return null;
 }
 
-export default function UploadZone({ file, previewUrl, onFile, onRemove, error, disabled }) {
+/* Photo picker for up to `max` photos of one area.
+   photos: [{ id, file, url }]. onAdd(files) receives the chosen files; onRemove(id) removes one. */
+export default function UploadZone({ photos, max, onAdd, onRemove, error, disabled }) {
   const inputRef = useRef(null);
   const [dragging, setDragging] = useState(false);
+  const full = photos.length >= max;
 
-  const pick = () => inputRef.current?.click();
+  const pick = () => !disabled && !full && inputRef.current?.click();
 
-  const handleFiles = (files) => {
-    if (files && files[0]) onFile(files[0]);
-  };
-
-  const onDrop = (e) => {
-    e.preventDefault();
-    setDragging(false);
-    if (!disabled) handleFiles(e.dataTransfer.files);
+  const dropProps = {
+    onDragOver: (e) => {
+      e.preventDefault();
+      if (!disabled && !full) setDragging(true);
+    },
+    onDragLeave: () => setDragging(false),
+    onDrop: (e) => {
+      e.preventDefault();
+      setDragging(false);
+      if (!disabled && !full) onAdd([...e.dataTransfer.files]);
+    },
   };
 
   return (
@@ -37,31 +43,15 @@ export default function UploadZone({ file, previewUrl, onFile, onRemove, error, 
         ref={inputRef}
         type="file"
         accept={ACCEPT_ATTR}
+        multiple
         hidden
         onChange={(e) => {
-          handleFiles(e.target.files);
+          onAdd([...e.target.files]);
           e.target.value = '';
         }}
       />
 
-      {previewUrl ? (
-        <figure className="overflow-hidden rounded-lg border border-line">
-          <img className="block aspect-[4/3] max-h-[420px] w-full bg-navy object-contain" src={previewUrl} alt="Selected construction site" />
-          <figcaption className="flex items-center justify-between gap-3 border-t border-line bg-paper-2 px-3 py-2">
-            <span className="min-w-0 truncate text-[13px] text-muted" title={file?.name}>
-              {file?.name} <span className="text-muted/80">({formatSize(file?.size || 0)})</span>
-            </span>
-            <span className="flex flex-none gap-1.5">
-              <Button size="sm" onClick={pick} disabled={disabled}>
-                Replace
-              </Button>
-              <Button size="sm" variant="danger" onClick={onRemove} disabled={disabled}>
-                Remove
-              </Button>
-            </span>
-          </figcaption>
-        </figure>
-      ) : (
+      {photos.length === 0 ? (
         <div
           className={cx(
             'flex aspect-[4/3] max-h-80 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border-2 border-dashed px-6 text-center transition-colors outline-none max-sm:aspect-[4/3.2]',
@@ -70,23 +60,57 @@ export default function UploadZone({ file, previewUrl, onFile, onRemove, error, 
           )}
           role="button"
           tabIndex={0}
-          aria-label="Choose a site photo"
+          aria-label={`Choose up to ${max} site photos`}
           onClick={pick}
           onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), pick())}
-          onDragOver={(e) => {
-            e.preventDefault();
-            setDragging(true);
-          }}
-          onDragLeave={() => setDragging(false)}
-          onDrop={onDrop}
+          {...dropProps}
         >
           <span className="grid size-12 place-items-center rounded-full bg-navy text-amber">
             <Icon name="upload" className="size-5" />
           </span>
-          <span className="text-[15px] font-medium text-heading">Drag a site photo here</span>
+          <span className="text-[15px] font-medium text-heading">Drag site photos here</span>
           <span className="text-[13px] text-muted">
-            or <span className="font-medium text-heading underline decoration-amber underline-offset-4">choose a file</span>. JPG, PNG or WEBP, up to 15 MB.
+            or <span className="font-medium text-heading underline decoration-amber underline-offset-4">choose files</span>. Up to {max}{' '}
+            photos of the same area. JPG, PNG or WEBP, up to 15 MB each.
           </span>
+        </div>
+      ) : (
+        <div className={cx('grid grid-cols-2 gap-2.5 rounded-lg', dragging && 'ring-2 ring-amber')} {...dropProps}>
+          {photos.map((p, i) => (
+            <figure key={p.id} className="relative overflow-hidden rounded-lg border border-line bg-navy">
+              <img src={p.url} alt={`Site photo ${i + 1}`} className="block aspect-[4/3] w-full object-cover" />
+              <span className="absolute top-2 left-2 grid size-6 place-items-center rounded-md bg-[#0f172a]/80 text-[12px] font-semibold text-white">
+                {i + 1}
+              </span>
+              <button
+                type="button"
+                onClick={() => onRemove(p.id)}
+                disabled={disabled}
+                className="absolute top-2 right-2 grid size-7 cursor-pointer place-items-center rounded-md bg-[#0f172a]/80 text-white hover:bg-critical disabled:cursor-not-allowed disabled:opacity-50"
+                aria-label={`Remove photo ${i + 1}`}
+                title="Remove photo"
+              >
+                <Icon name="close" className="size-3.5" />
+              </button>
+              <figcaption className="truncate bg-paper-2 px-2 py-1 text-[11.5px] text-muted" title={p.file.name}>
+                {formatSize(p.file.size)}
+              </figcaption>
+            </figure>
+          ))}
+          {!full && (
+            <button
+              type="button"
+              onClick={pick}
+              disabled={disabled}
+              className="flex aspect-[4/3] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-line text-[13px] text-muted hover:border-amber hover:text-heading disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Icon name="plus" className="size-5" />
+              Add photo
+              <span className="text-[11.5px]">
+                {photos.length} of {max}
+              </span>
+            </button>
+          )}
         </div>
       )}
 

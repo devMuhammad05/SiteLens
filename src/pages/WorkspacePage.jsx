@@ -68,8 +68,7 @@ export default function WorkspacePage({ active = true }) {
 
       <div className="mx-auto max-w-[1280px] px-5 pt-10 pb-20 lg:px-8 print:max-w-none print:p-0">
         <div className="no-print mb-8">
-          <p className="font-mono text-[11px] tracking-[0.14em] text-muted">WORKSPACE</p>
-          <h1 className="mt-2 font-display text-[36px] leading-tight font-semibold tracking-tight max-sm:text-[28px]">{current.title}</h1>
+          <h1 className="font-display text-[36px] leading-tight font-semibold tracking-tight max-sm:text-[28px]">{current.title}</h1>
           <p className="mt-1.5 max-w-[64ch] text-[15px] text-muted">{current.blurb}</p>
         </div>
 

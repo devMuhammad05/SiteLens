@@ -33,6 +33,14 @@ function Finding({ f }) {
       </div>
       <p className="max-w-[72ch] text-[14px]">{f.description}</p>
       <dl className="flex flex-wrap gap-x-6 gap-y-1 text-[12.5px] text-muted">
+        {f.photos?.length > 0 && (
+          <div className="flex gap-1.5">
+            <dt>Seen in:</dt>
+            <dd className="text-ink">
+              {f.photos.length > 1 ? 'photos' : 'photo'} {f.photos.join(', ')}
+            </dd>
+          </div>
+        )}
         {f.location && (
           <div className="flex gap-1.5">
             <dt>Location:</dt>
@@ -51,7 +59,8 @@ function Finding({ f }) {
 }
 
 /* The finished photo inspection report, laid out as a numbered document. */
-export default function Results({ result, meta, previewUrl }) {
+export default function Results({ result, meta, photoUrls = [] }) {
+  const many = photoUrls.length > 1;
   const counts = Object.fromEntries(SEVERITIES.map((s) => [s, 0]));
   result.findings.forEach((f) => counts[f.severity]++);
   const actions = result.findings.filter((f) => f.recommendation).sort(bySeverity);
@@ -68,6 +77,7 @@ export default function Results({ result, meta, previewUrl }) {
         cells={[
           ['Date', longDate(meta.date)],
           ['Inspected by', meta.inspector],
+          ...(many ? [['Photos', String(photoUrls.length)]] : []),
           ['Findings', String(result.findings.length)],
         ]}
         status={{ label: 'Overall risk', value: result.overallRisk, tone: severityTone(result.overallRisk) }}
@@ -75,13 +85,26 @@ export default function Results({ result, meta, previewUrl }) {
 
       {result.demo && (
         <Notice>
-          <strong>This is an example report.</strong> It shows what SiteLens produces, but it was not made from your photo.
+          <strong>This is an example report.</strong> It shows what SiteLens produces, but it was not made from your {many ? 'photos' : 'photo'}.
         </Notice>
       )}
 
       <DocSection n={next()} title="Summary">
-        <div className={cx('grid gap-5', previewUrl && 'sm:grid-cols-[minmax(0,220px)_1fr]')}>
-          {previewUrl && <img className="aspect-[4/3] w-full rounded-lg object-cover" src={previewUrl} alt="Inspected site" />}
+        <div className={cx('grid gap-5', photoUrls.length > 0 && 'sm:grid-cols-[minmax(0,220px)_1fr]')}>
+          {photoUrls.length > 0 && (
+            <div className={cx('grid content-start gap-2', many && 'grid-cols-2')}>
+              {photoUrls.map((url, i) => (
+                <figure key={url} className="relative">
+                  <img className="aspect-[4/3] w-full rounded-lg object-cover" src={url} alt={`Inspected site, photo ${i + 1}`} />
+                  {many && (
+                    <span className="absolute top-1.5 left-1.5 grid size-5 place-items-center rounded bg-[#0f172a]/80 text-[11px] font-semibold text-white">
+                      {i + 1}
+                    </span>
+                  )}
+                </figure>
+              ))}
+            </div>
+          )}
           <div className="grid content-start gap-4">
             <p className="max-w-[72ch] text-[14.5px] leading-relaxed">{result.summary || 'No summary returned.'}</p>
             <dl className="grid grid-cols-4 divide-x divide-line rounded-lg border border-line">
@@ -99,7 +122,7 @@ export default function Results({ result, meta, previewUrl }) {
       </DocSection>
 
       {result.elements.length > 0 && (
-        <DocSection n={next()} title="What's in the photo">
+        <DocSection n={next()} title={many ? "What's in the photos" : "What's in the photo"}>
           <DocTable head={['Element', 'Description']}>
             {result.elements.map((e, i) => (
               <tr key={i}>
