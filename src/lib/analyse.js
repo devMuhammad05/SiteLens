@@ -1,18 +1,16 @@
 import { demoResult } from './demo.js';
+import { SEVERITIES, asArray, fileToBase64, generateJson, isDemoMode, normaliseSeverity } from './gemma.js';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const MODEL = import.meta.env.VITE_GEMMA_MODEL || 'gemma-4-31b-it';
-const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models';
+export { SEVERITIES, isDemoMode };
+export { modelName } from './gemma.js';
 
-export const SEVERITIES = ['Low', 'Medium', 'High', 'Critical'];
+const MAX_EDGE = 2048;
+
 export const CATEGORIES = {
   safety: 'Safety hazard',
   workmanship: 'Workmanship concern',
   site: 'Site condition',
 };
-
-export const isDemoMode = !API_KEY;
-export const modelName = MODEL;
 
 const PROMPT = `You are SiteLens, an assistant that supports preliminary visual inspections of construction sites.
 Analyse the attached construction site photograph. Only report what is plausibly VISIBLE in the image; do not invent details.
@@ -44,22 +42,26 @@ Category guidance:
 - workmanship: visible cracks, honeycombing, poor concrete finish, misaligned or exposed reinforcement, poor formwork.
 - site: poor housekeeping, material storage, debris, drainage, obstructed access.`;
 
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result).split(',')[1]);
-    reader.onerror = () => reject(new Error('Could not read the image file.'));
-    reader.readAsDataURL(file);
-  });
-}
-
-// Gemma may wrap JSON in code fences or add stray prose; pull out the outermost object.
-function extractJson(text) {
-  const cleaned = text.replace(/```(?:json)?/gi, '').trim();
-  const start = cleaned.indexOf('{');
-  const end = cleaned.lastIndexOf('}');
-  if (start === -1 || end <= start) throw new Error('The model did not return a JSON report.');
-  return JSON.parse(cleaned.slice(start, end + 1));
+// Phone photos are often 4000px+ and several MB; Gemma doesn't need that much detail and
+// large uploads are slow, so downscale to MAX_EDGE and re-encode as JPEG.
+async function prepareImage(file) {
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
+    if (scale === 1 && file.size < 1.5 * 1024 * 1024) {
+      bitmap.close();
+      return { mime: file.type, data: await fileToBase64(file) };
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(bitmap.width * scale);
+    canvas.height = Math.round(bitmap.height * scale);
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+    const blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.85));
+    return { mime: 'image/jpeg', data: await fileToBase64(blob) };
+  } catch {
+    return { mime: file.type, data: await fileToBase64(file) };
+  }
 }
 
 const clampConfidence = (v) => {
@@ -69,9 +71,6 @@ const clampConfidence = (v) => {
   return Math.round(Math.min(100, Math.max(0, n)));
 };
 
-const normaliseSeverity = (v) =>
-  SEVERITIES.find((s) => s.toLowerCase() === String(v).trim().toLowerCase()) || 'Medium';
-
 const normaliseCategory = (v) => {
   const s = String(v).toLowerCase();
   if (s.includes('work')) return 'workmanship';
@@ -80,7 +79,7 @@ const normaliseCategory = (v) => {
 };
 
 export function normaliseResult(raw) {
-  const findings = (Array.isArray(raw.findings) ? raw.findings : [])
+  const findings = asArray(raw.findings)
     .map((f, i) => ({
       id: `f${i + 1}`,
       category: normaliseCategory(f.category),
@@ -97,13 +96,13 @@ export function normaliseResult(raw) {
   return {
     summary: String(raw.summary || ''),
     overallRisk: raw.overallRisk ? normaliseSeverity(raw.overallRisk) : worst || 'Low',
-    elements: (Array.isArray(raw.elements) ? raw.elements : []).map((e) => ({
+    elements: asArray(raw.elements).map((e) => ({
       name: String(e.name || e),
       description: String(e.description || ''),
       confidence: clampConfidence(e.confidence),
     })),
     findings,
-    observations: (Array.isArray(raw.observations) ? raw.observations : []).map(String),
+    observations: asArray(raw.observations).map(String),
   };
 }
 
@@ -113,27 +112,10 @@ export async function analyseImage(file) {
     return { ...normaliseResult(demoResult), demo: true, model: 'demo' };
   }
 
-  const data = await fileToBase64(file);
-  const res = await fetch(`${ENDPOINT}/${MODEL}:generateContent`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': API_KEY },
-    body: JSON.stringify({
-      contents: [
-        {
-          role: 'user',
-          parts: [{ inline_data: { mime_type: file.type, data } }, { text: PROMPT }],
-        },
-      ],
-      generationConfig: { temperature: 0.2, maxOutputTokens: 4096 },
-    }),
-  });
-
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    throw new Error(body?.error?.message || `Analysis request failed (HTTP ${res.status}).`);
-  }
-  const text = body?.candidates?.[0]?.content?.parts?.map((p) => p.text || '').join('') || '';
-  if (!text) throw new Error('The model returned an empty response.');
-
-  return { ...normaliseResult(extractJson(text)), demo: false, model: MODEL };
+  const image = await prepareImage(file);
+  const { json, model } = await generateJson([
+    { inline_data: { mime_type: image.mime, data: image.data } },
+    { text: PROMPT },
+  ]);
+  return { ...normaliseResult(json), demo: false, model };
 }

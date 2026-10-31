@@ -1,173 +1,162 @@
-import { CATEGORIES, SEVERITIES } from '../lib/analyse.js';
+import { SEVERITIES } from '../lib/analyse.js';
+import { longDate } from '../lib/format.js';
+import { Bullets, Chip, DocHeader, DocSection, DocTable, Notice, TONE_BORDER, cx, severityTone } from './ui.jsx';
 
-const sevClass = (s) => `sev sev-${s.toLowerCase()}`;
+const bySeverity = (a, b) => SEVERITIES.indexOf(b.severity) - SEVERITIES.indexOf(a.severity);
+
+const CATEGORY_SECTIONS = [
+  { key: 'safety', title: 'Safety hazards' },
+  { key: 'workmanship', title: 'Defects and quality issues' },
+  { key: 'site', title: 'Site conditions and activities' },
+];
 
 function Confidence({ value }) {
   return (
-    <span className="confidence" title={`Model confidence ${value}%`}>
-      <span className="conf-track">
-        <span className="conf-fill" style={{ width: `${value}%` }} />
+    <span className="inline-flex items-center gap-1.5 tabular-nums" title={`How sure SiteLens is: ${value}%`}>
+      <span className="h-1.5 w-12 overflow-hidden rounded-full bg-line">
+        <span className="block h-full rounded-full bg-line-strong/60" style={{ width: `${value}%` }} />
       </span>
       {value}%
     </span>
   );
 }
 
-function FindingCard({ f }) {
+function Finding({ f }) {
+  const tone = severityTone(f.severity);
   return (
-    <article className={`finding border-${f.severity.toLowerCase()}`}>
-      <header>
-        <h4>{f.title}</h4>
-        <span className={sevClass(f.severity)}>{f.severity}</span>
-      </header>
-      <p>{f.description}</p>
-      <dl>
+    <li className={cx('avoid-break grid gap-1.5 rounded-r-lg border-l-[3px] bg-paper-2/70 py-3 pr-4 pl-4', TONE_BORDER[tone])}>
+      <div className="flex items-start justify-between gap-3">
+        <h4 className="text-[14.5px] font-semibold">{f.title}</h4>
+        <Chip tone={tone} solid>
+          {f.severity}
+        </Chip>
+      </div>
+      <p className="max-w-[72ch] text-[14px]">{f.description}</p>
+      <dl className="flex flex-wrap gap-x-6 gap-y-1 text-[12.5px] text-muted">
         {f.location && (
-          <>
-            <dt>Location</dt>
-            <dd>{f.location}</dd>
-          </>
+          <div className="flex gap-1.5">
+            <dt>Location:</dt>
+            <dd className="text-ink">{f.location}</dd>
+          </div>
         )}
-        <dt>Confidence</dt>
-        <dd>
-          <Confidence value={f.confidence} />
-        </dd>
+        <div className="flex items-center gap-1.5">
+          <dt>How sure:</dt>
+          <dd>
+            <Confidence value={f.confidence} />
+          </dd>
+        </div>
       </dl>
-      {f.recommendation && (
-        <p className="recommendation">
-          <strong>Recommended action:</strong> {f.recommendation}
-        </p>
-      )}
-    </article>
+    </li>
   );
 }
 
+/* The finished photo inspection report, laid out as a numbered document. */
 export default function Results({ result, meta, previewUrl }) {
   const counts = Object.fromEntries(SEVERITIES.map((s) => [s, 0]));
   result.findings.forEach((f) => counts[f.severity]++);
-  const actions = result.findings.filter((f) => f.recommendation);
+  const actions = result.findings.filter((f) => f.recommendation).sort(bySeverity);
+
+  // Number only the sections that have content, the way a real report would.
+  let n = 0;
+  const next = () => ++n;
 
   return (
-    <section className="report" id="report">
-      <header className="report-head">
-        <div>
-          <p className="eyebrow">Inspection report</p>
-          <h2>{meta.site || 'Untitled site'}</h2>
-          <p className="muted">
-            {meta.inspector ? `Inspector: ${meta.inspector} · ` : ''}
-            {meta.date} · Model: {result.model}
-          </p>
-        </div>
-        <div className={`risk risk-${result.overallRisk.toLowerCase()}`}>
-          <span>Overall risk</span>
-          <strong>{result.overallRisk}</strong>
-        </div>
-      </header>
+    <article className="grid gap-7" id="report">
+      <DocHeader
+        kind="Site inspection report"
+        title={meta.site || 'Untitled site'}
+        cells={[
+          ['Date', longDate(meta.date)],
+          ['Inspected by', meta.inspector],
+          ['Findings', String(result.findings.length)],
+        ]}
+        status={{ label: 'Overall risk', value: result.overallRisk, tone: severityTone(result.overallRisk) }}
+      />
 
       {result.demo && (
-        <p className="notice">
-          Demo mode: these are sample results, not an analysis of your photo. Add
-          <code>VITE_GEMINI_API_KEY</code> to <code>.env</code> to enable Gemma analysis.
-        </p>
+        <Notice>
+          <strong>This is an example report.</strong> It shows what SiteLens produces, but it was not made from your photo.
+        </Notice>
       )}
 
-      <div className="report-top">
-        {previewUrl && <img className="report-img" src={previewUrl} alt="Inspected site" />}
-        <div>
-          <h3>Summary</h3>
-          <p>{result.summary || 'No summary returned.'}</p>
-          <div className="counts">
-            {[...SEVERITIES].reverse().map((s) => (
-              <div key={s} className="count">
-                <strong>{counts[s]}</strong>
-                <span className={sevClass(s)}>{s}</span>
-              </div>
-            ))}
+      <DocSection n={next()} title="Summary">
+        <div className={cx('grid gap-5', previewUrl && 'sm:grid-cols-[minmax(0,220px)_1fr]')}>
+          {previewUrl && <img className="aspect-[4/3] w-full rounded-lg object-cover" src={previewUrl} alt="Inspected site" />}
+          <div className="grid content-start gap-4">
+            <p className="max-w-[72ch] text-[14.5px] leading-relaxed">{result.summary || 'No summary returned.'}</p>
+            <dl className="grid grid-cols-4 divide-x divide-line rounded-lg border border-line">
+              {[...SEVERITIES].reverse().map((s) => (
+                <div key={s} className="grid justify-items-start gap-1.5 px-3 py-2.5">
+                  <dd className="text-[20px] leading-none font-semibold text-heading tabular-nums">{counts[s]}</dd>
+                  <dt>
+                    <Chip tone={severityTone(s)}>{s}</Chip>
+                  </dt>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
-      </div>
+      </DocSection>
 
       {result.elements.length > 0 && (
-        <>
-          <h3>Construction elements identified</h3>
-          <ul className="elements">
+        <DocSection n={next()} title="What's in the photo">
+          <DocTable head={['Element', 'Description']}>
             {result.elements.map((e, i) => (
-              <li key={i}>
-                <div>
-                  <strong>{e.name}</strong>
-                  {e.description && <span className="muted"> — {e.description}</span>}
-                </div>
-                <Confidence value={e.confidence} />
-              </li>
+              <tr key={i}>
+                <td className="font-medium whitespace-nowrap text-heading">{e.name}</td>
+                <td>{e.description || '—'}</td>
+              </tr>
             ))}
-          </ul>
-        </>
+          </DocTable>
+        </DocSection>
       )}
 
-      {Object.entries(CATEGORIES).map(([key, label]) => {
-        const items = result.findings.filter((f) => f.category === key);
+      {result.findings.length === 0 && (
+        <p className="rounded-lg border border-low/30 bg-low/8 px-4 py-3 font-medium text-low">No hazards or defects were spotted in this photo.</p>
+      )}
+
+      {CATEGORY_SECTIONS.map(({ key, title }) => {
+        const items = result.findings.filter((f) => f.category === key).sort(bySeverity);
+        if (!items.length) return null;
         return (
-          <div key={key} className="category">
-            <h3>
-              {label}s <span className="badge">{items.length}</span>
-            </h3>
-            {items.length ? (
-              <div className="findings">
-                {items.map((f) => (
-                  <FindingCard key={f.id} f={f} />
-                ))}
-              </div>
-            ) : (
-              <p className="muted">None visibly identified.</p>
-            )}
-          </div>
+          <DocSection key={key} n={next()} title={title} count={items.length}>
+            <ul className="grid gap-2.5">
+              {items.map((f) => (
+                <Finding key={f.id} f={f} />
+              ))}
+            </ul>
+          </DocSection>
         );
       })}
 
       {result.observations.length > 0 && (
-        <>
-          <h3>General observations</h3>
-          <ul className="observations">
-            {result.observations.map((o, i) => (
-              <li key={i}>{o}</li>
-            ))}
-          </ul>
-        </>
+        <DocSection n={next()} title="Other observations">
+          <Bullets items={result.observations} />
+        </DocSection>
       )}
 
       {actions.length > 0 && (
-        <>
-          <h3>Prioritised action plan</h3>
-          <table className="actions">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Priority</th>
-                <th>Issue</th>
-                <th>Action</th>
+        <DocSection n={next()} title="Recommended actions" count={actions.length}>
+          <DocTable head={['Priority', 'Action', 'For']}>
+            {actions.map((f) => (
+              <tr key={f.id}>
+                <td>
+                  <Chip tone={severityTone(f.severity)} solid>
+                    {f.severity}
+                  </Chip>
+                </td>
+                <td className="font-medium text-heading">{f.recommendation}</td>
+                <td className="text-muted">{f.title}</td>
               </tr>
-            </thead>
-            <tbody>
-              {actions.map((f, i) => (
-                <tr key={f.id}>
-                  <td>{i + 1}</td>
-                  <td>
-                    <span className={sevClass(f.severity)}>{f.severity}</span>
-                  </td>
-                  <td>{f.title}</td>
-                  <td>{f.recommendation}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
+            ))}
+          </DocTable>
+        </DocSection>
       )}
 
-      <p className="disclaimer">
-        SiteLens supports preliminary visual inspections only. Findings are AI-generated from a single photograph
-        and must be verified on site. They do not replace professional engineering judgement or physical site
-        assessments.
+      <p className="border-t border-line pt-4 text-xs text-muted">
+        This report was produced by AI from a single photo. It is a first look only, so confirm every finding on site. It does not
+        replace a professional engineer's judgement.
       </p>
-    </section>
+    </article>
   );
 }

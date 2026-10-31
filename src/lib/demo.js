@@ -73,3 +73,60 @@ export const demoResult = {
     'Materials stored on open ground without visible pallets or covers.',
   ],
 };
+
+// Sample daily diary output for demo mode.
+export const demoDiaryResult = {
+  summary:
+    'Good progress on Block B first-floor slab: reinforcement fixing reached about 80% and column formwork for C1–C6 was completed. Work stopped for 2 hours after a mid-morning downpour, and the concrete pour planned for Thursday is at risk because the slab rebar inspection has not been booked.',
+  status: 'Minor delays',
+  weather: { conditions: 'Heavy rain in the morning, then sunny', temperature: '24–31°C', impact: 'Moderate', hoursLost: 2, notes: 'Site drained by 1 pm' },
+  labour: [
+    { trade: 'Steel fixers', company: 'Adeyemi Rebar Ltd', headcount: 6, hours: 8 },
+    { trade: 'Carpenters', company: '', headcount: 4, hours: 8 },
+    { trade: 'Masons', company: '', headcount: 2, hours: 6 },
+    { trade: 'Labourers', company: '', headcount: 5, hours: 8 },
+  ],
+  plant: [
+    { item: 'Concrete mixer', quantity: 1, status: 'Broken down', notes: 'Drive belt failed; mechanic due tomorrow' },
+    { item: 'Tower crane', quantity: 1, status: 'Working', notes: '' },
+  ],
+  progress: [
+    { activity: 'Slab reinforcement fixing', location: 'Block B, first floor', status: 'In progress', percentComplete: 80, notes: 'Top mat outstanding on grid lines 4–6' },
+    { activity: 'Column formwork', location: 'Block B, C1–C6', status: 'Completed', percentComplete: 100, notes: '' },
+    { activity: 'Blockwork', location: 'Ground floor partitions', status: 'Delayed', percentComplete: 40, notes: 'Masons moved to drainage clean-up during rain' },
+  ],
+  deliveries: [{ material: '12 mm rebar', quantity: '3 tonnes', supplier: 'Dangote Steel', notes: 'Stored on timber bearers near gate' }],
+  visitors: [{ name: 'Engr. Okafor', organisation: 'Consultant', purpose: 'Reviewed column formwork alignment' }],
+  issues: [
+    {
+      title: 'Rebar inspection not booked',
+      description: 'Consultant inspection of slab reinforcement is required before Thursday\'s pour but has not been requested.',
+      type: 'Delay',
+      severity: 'High',
+      impact: 'Thursday pour may slip by 1–2 days',
+      action: 'Submit inspection request to the consultant today.',
+      owner: 'Site engineer',
+    },
+    {
+      title: 'Concrete mixer broken down',
+      description: 'Drive belt failed during the afternoon; blinding concrete for footings was not completed.',
+      type: 'Equipment',
+      severity: 'Medium',
+      impact: 'Footing blinding delayed by one day',
+      action: 'Confirm mechanic attendance tomorrow; arrange hire mixer as backup.',
+      owner: 'Plant supervisor',
+    },
+    {
+      title: 'Rain stoppage',
+      description: 'Heavy rain stopped external work for about 2 hours.',
+      type: 'Weather',
+      severity: 'Low',
+      impact: '2 hours lost',
+      action: 'Record as weather delay; check slab rebar for mud before inspection.',
+      owner: '',
+    },
+  ],
+  safety: { incidents: 0, nearMisses: 1, toolboxTalk: 'Working at height on slab edges', notes: ['Near miss: plank fell from scaffold lift 2; area cordoned and toe boards fitted.'] },
+  tomorrow: ['Complete top mat reinforcement on grid lines 4–6', 'Book consultant rebar inspection', 'Repair or replace concrete mixer', 'Resume ground floor blockwork'],
+  missing: ['Hours for labourers on the afternoon shift were not stated'],
+};
